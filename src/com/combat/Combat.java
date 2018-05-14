@@ -30,6 +30,11 @@ public class Combat
     // Hallo Git Test Das ist ein we
     // Hallo das ist ein Git Test
 
+    public void doSmth()
+    {
+
+    }
+
     public ArrayList<Character> turnOrder()
     {
         ArrayList<Character> turnOrder = new ArrayList<Character>();

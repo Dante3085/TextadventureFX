@@ -9,6 +9,7 @@ import com.character.Skill;
 import com.ui.Console;
 import com.ui.GameMenu;
 import com.ui.GameMenuButton;
+import com.ui.TurnOrderView;
 import javafx.animation.ScaleTransition;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -21,9 +22,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -52,6 +56,8 @@ public class Main extends Application
     boolean gmbsVisible = true;
 
     Line line;
+
+    TurnOrderView t;
 
     public static void main(String[] args)
     {
@@ -477,6 +483,8 @@ public class Main extends Application
         setupImages();
         setupMainMenu();
         setupSceneKeys();
+        t = new TurnOrderView(100);
+        root.getChildren().add(t);
         initWindow();
         initConsole();
 

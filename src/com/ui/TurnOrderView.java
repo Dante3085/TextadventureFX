@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class TurnOrderView extends StackPane
 {
-    boolean undo = false;
+    private boolean undo = false;
 
     private ArrayList<Character> turnOrder = new ArrayList<>();
     private ArrayList<Rectangle> turnOrderRecs = new ArrayList<>();
@@ -139,7 +139,8 @@ public class TurnOrderView extends StackPane
         /**
          * Enum constructors have to be private.
          * They are only used within this block.
-         * @param numVal
+         * Internally initializes numVal with Constructor for every enum value. (Look above)
+         * @param numVal int Value used by enums.
          */
         private Position(int numVal)
         {

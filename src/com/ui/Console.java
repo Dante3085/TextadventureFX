@@ -33,16 +33,6 @@ public class Console extends OutputStream
         });
     }
 
-    @Override
-    public void write(final int i) throws IOException
-    {
-        Platform.runLater(new Runnable() {
-            public void run() {
-                textArea.appendText(String.valueOf((char) i));
-            }
-        });
-    }
-
     public void readConsoleCommand()
     {
         String command = textArea.getText();
@@ -81,6 +71,16 @@ public class Console extends OutputStream
                 break;
             }
         }
+    }
+
+    @Override
+    public void write(final int i) throws IOException
+    {
+        Platform.runLater(new Runnable() {
+            public void run() {
+                textArea.appendText(String.valueOf((char) i));
+            }
+        });
     }
 
     /**

@@ -77,14 +77,6 @@ public class Character
         this.speed = speed;
 
         setupSkills();
-//        try
-//        {
-//            Main.console.writeToConsole("NEW CHARACTER \n\t" + this.toString());
-//        } catch (NullPointerException e)
-//        {
-//            System.out.println("@com.character.Character Character(String name, int hp, int mp, int strength, int defence, int wit, int agility, int speed): CONSOLE_NOT_INITIALIZED");
-//            e.printStackTrace();
-//        }
     }
 
     public void registerSkill(Skill skill, ICallback callback)
@@ -178,7 +170,7 @@ public class Character
 
     public void action_defend()
     {
-        // TODO: Muss irgendwie nach gewisser Anzahl von Zügen wieder abgezogen werden.
+        // TODO: Subtract defence boost after a certain amount of turns.
         this.defence += 10;
     }
 

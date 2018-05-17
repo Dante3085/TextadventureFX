@@ -22,17 +22,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 /**
  * @author mjsch
@@ -57,7 +51,7 @@ public class Main extends Application
 
     Line line;
 
-    TurnOrderView t;
+    TurnOrderView turnOrderView;
 
     public static void main(String[] args)
     {
@@ -207,38 +201,10 @@ public class Main extends Application
     }
 
     /**
-     * @deprecated
-     */
-    public void setAutoResize(boolean on)
-    {
-//        if (on == true)
-//        {
-//            scene.widthProperty().addListener((observable, oldValue, newValue) ->
-//            {
-//                imgView.setFitWidth(newValue.doubleValue());
-//                gmb_resume.setTranslateX(scene.widthProperty().doubleValue() - 350);
-//                gmb_lvlup.setTranslateX(scene.widthProperty().doubleValue() - 350);
-//                gmb_items.setTranslateX(scene.widthProperty().doubleValue() - 350);
-//                gmb_abilities.setTranslateX(scene.widthProperty().doubleValue() - 350);
-//                gmb_equip.setTranslateX(scene.widthProperty().doubleValue() - 350);
-//                gmb_status.setTranslateX(scene.widthProperty().doubleValue() - 350);
-//                gmb_options.setTranslateX(scene.widthProperty().doubleValue() - 350);
-//                gmb_exit.setTranslateX(scene.widthProperty().doubleValue() - 350);
-//            });     // Update imgView size when scene is resized.
-//
-//            scene.heightProperty().addListener((observable, oldValue, newValue) ->
-//            {
-//                imgView.setFitHeight(newValue.doubleValue());
-//            });
-//        }
-    }
-
-    /**
      * Assembles Textadventure's main menu with all the buttons and their functionality. Menus are represented by instances of the 'GameMenu' class.
      */
     public void setupMainMenu()
     {
-
         mainMenu.addButton(new GameMenuButton("Resume", 450, 55));
         mainMenu.addButton(new GameMenuButton("Level Up", 450, 55));
         mainMenu.addButton(new GameMenuButton("Items", 450, 55));
@@ -257,6 +223,7 @@ public class Main extends Application
         pointer.setTranslateY(scene.heightProperty().doubleValue() + 50);
         pointer.setOnMouseClicked(event ->
         {
+            turnOrderView.test();
         });
 
         pointer = mainMenu.getButton("Level Up");
@@ -388,66 +355,6 @@ public class Main extends Application
         root.getChildren().add(mainMenu);
     }
 
-    public String getStackTrace(final Throwable throwable)
-    {
-        final StringWriter sw = new StringWriter();
-        final PrintWriter pw = new PrintWriter(sw, true);
-        throwable.printStackTrace(pw);
-        return sw.getBuffer().toString();
-    }
-
-    /**
-     * @deprecated
-     */
-    public void setupButtons()
-    {
-//        gmb_resume = new GameMenuButton("Resume", 450, 55);
-//        gmb_resume.setTranslateX(scene.widthProperty().doubleValue() + 1500);
-//        gmb_resume.setTranslateY(scene.heightProperty().doubleValue() + 50);
-//
-//        gmb_lvlup = new GameMenuButton("Level Up", 450, 55);
-//        gmb_lvlup.setTranslateX(scene.widthProperty().doubleValue() + 1500);
-//        gmb_lvlup.setTranslateY(scene.heightProperty().doubleValue() + 125);
-//
-//        gmb_items = new GameMenuButton("Items", 450, 55);
-//        gmb_items.setTranslateX(scene.widthProperty().doubleValue() + 1500);
-//        gmb_items.setTranslateY(scene.heightProperty().doubleValue() + 200);
-//
-//        gmb_abilities = new GameMenuButton("Abilities", 450, 55);
-//        gmb_abilities.setTranslateX(scene.widthProperty().doubleValue() + 1500);
-//        gmb_abilities.setTranslateY(scene.heightProperty().doubleValue() + 275);
-//
-//        gmb_equip = new GameMenuButton("Equip", 450, 55);
-//        gmb_equip.setTranslateX(scene.widthProperty().doubleValue() + 1500);
-//        gmb_equip.setTranslateY(scene.heightProperty().doubleValue() + 350);
-//
-//        gmb_status = new GameMenuButton("Status", 450, 55);
-//        gmb_status.setTranslateX(scene.widthProperty().doubleValue() + 1500);
-//        gmb_status.setTranslateY(scene.heightProperty().doubleValue() + 425);
-//
-//        gmb_options = new GameMenuButton("Options", 450, 55);
-//        gmb_options.setTranslateX(scene.widthProperty().doubleValue() + 1500);
-//        gmb_options.setTranslateY(scene.heightProperty().doubleValue() + 500);
-//
-//        gmb_exit = new GameMenuButton("Exit", 450, 55);
-//        gmb_exit.setTranslateX(scene.widthProperty().doubleValue() + 1500);
-//        gmb_exit.setTranslateY(scene.heightProperty().doubleValue() + 575);
-//        gmb_exit.setOnMouseClicked(event ->
-//        {
-//            mainWindow.setFullScreen(false);
-//            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Close ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-//            alert.showAndWait();
-//
-//            if (alert.getResult() == ButtonType.YES)
-//                System.exit(0);
-//            else
-//                mainWindow.setFullScreen(true);
-//        });
-    }
-
-    /**
-     *
-     */
     public void setupImages()
     {
         imgView = new ImageView(new Image(getClass().getResource("../res/DarkSpace.jpg").toExternalForm())); // Muss mit ".." eine Ordnerebene höher gehen, um res zu finden.
@@ -483,8 +390,8 @@ public class Main extends Application
         setupImages();
         setupMainMenu();
         setupSceneKeys();
-        t = new TurnOrderView(100);
-        root.getChildren().add(t);
+        turnOrderView = new TurnOrderView();
+        root.getChildren().add(turnOrderView);
         initWindow();
         initConsole();
 

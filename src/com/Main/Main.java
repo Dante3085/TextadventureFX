@@ -6,10 +6,7 @@ package com.Main;
 
 import com.character.Character;
 import com.character.Skill;
-import com.ui.Console;
-import com.ui.GameMenu;
-import com.ui.GameMenuButton;
-import com.ui.TurnOrderView;
+import com.ui.*;
 import javafx.animation.ScaleTransition;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -27,6 +24,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.util.HashMap;
 
 /**
  * @author mjsch
@@ -223,7 +222,7 @@ public class Main extends Application
         pointer.setTranslateY(scene.heightProperty().doubleValue() + 50);
         pointer.setOnMouseClicked(event ->
         {
-            turnOrderView.test();
+            turnOrderView.turn();
         });
 
         pointer = mainMenu.getButton("Level Up");

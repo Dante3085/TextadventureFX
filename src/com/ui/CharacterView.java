@@ -12,11 +12,15 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
+/**
+ * Display for Character Attributes that the Player should know about.
+ * @author mjsch
+ */
 public class CharacterView extends StackPane
 {
-    String name;
-    String hpValue;
-    String mpValue;
+    private String name;
+    private String hpValue;
+    private String mpValue;
 
     private Rectangle rec_bg;
 

@@ -6,6 +6,10 @@ import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 
+/**
+ * Describes what a menu is in the game.
+ * @author mjsch
+ */
 public class GameMenu extends VBox
 {
     private String name;

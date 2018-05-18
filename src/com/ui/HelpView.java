@@ -9,6 +9,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+/**
+ * Display that shows usefull information in menus for the player.
+ * @author mjsch
+ */
 public class HelpView extends StackPane
 {
     // TIMELINE

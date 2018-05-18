@@ -1,5 +1,10 @@
 package com.lists;
 
+/**
+ * Link for Linked List.
+ * @param <T>
+ * @author mjsch
+ */
 public class Link<T>
 {
     public T data;

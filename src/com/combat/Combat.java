@@ -7,6 +7,10 @@ import com.character.Character;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+/**
+ * Handles Combat in the Textadventure.
+ * @author mjsch
+ */
 public class Combat
 {
     ArrayList<Character> party1 = new ArrayList<Character>();

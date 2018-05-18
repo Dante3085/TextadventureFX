@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+/**
+ * Console Display for Debugging.
+ * @author mjsch
+ */
 public class Console extends OutputStream
 {
     private TextArea textArea;

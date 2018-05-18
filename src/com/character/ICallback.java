@@ -1,5 +1,9 @@
 package com.character;
 
+/**
+ * Makes it possible to pass
+ * @author mjsch
+ */
 public interface ICallback
 {
     /**

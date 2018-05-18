@@ -12,6 +12,10 @@ import javafx.util.Duration;
 
 import java.util.ArrayList;
 
+/**
+ * UI-Element for Combat. Shows the player the turn-order of Characters.
+ * @author mjsch
+ */
 public class TurnOrderView extends StackPane
 {
     private boolean undo = false;

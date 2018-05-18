@@ -1,5 +1,9 @@
 package com.ui;
 
+/**
+ * Enum that defines all the positions that a TurnOrderRec can be in.
+ * @author mjsch
+ */
 public enum Position
 {
     FIRST(0, "FIRST"),

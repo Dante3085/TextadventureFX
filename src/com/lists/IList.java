@@ -1,5 +1,10 @@
 package com.lists;
 
+/**
+ * Describes features that a List should have.
+ * @param <T>
+ * @author mjsch
+ */
 public interface IList<T> {
     /**
      * Returns the number of elements in the list

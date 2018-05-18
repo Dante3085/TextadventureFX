@@ -1,5 +1,10 @@
 package com.set;
 
+/**
+ *
+ * @param <T>
+ * @author mjsch
+ */
 public interface ISet<T>
 {
     public boolean isEmpty();

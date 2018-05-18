@@ -1,5 +1,10 @@
 package com.lists;
 
+/**
+ * Linked List iterator.
+ * @param <T>
+ * @author mjsch
+ */
 public class Iterator<T> implements java.util.Iterator
 {
 	private Link<T> current;

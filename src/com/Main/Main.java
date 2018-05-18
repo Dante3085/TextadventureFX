@@ -1,9 +1,5 @@
 package com.Main;
 
-/**
- *
- */
-
 import com.character.Character;
 import com.character.Skill;
 import com.ui.*;
@@ -25,11 +21,9 @@ import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.HashMap;
-
 /**
- * @author mjsch
  * Main Class of Textadventure.
+ * @author mjsch
  */
 public class Main extends Application
 {
@@ -390,7 +384,8 @@ public class Main extends Application
         setupMainMenu();
         setupSceneKeys();
         turnOrderView = new TurnOrderView();
-        root.getChildren().add(turnOrderView);
+        FPS_View fps_view = new FPS_View();
+        root.getChildren().addAll(turnOrderView, fps_view);
         initWindow();
         initConsole();
 

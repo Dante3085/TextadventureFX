@@ -14,7 +14,7 @@ import java.util.HashMap;
  *  - Use Magic
  *  - Use Item
  *  - End Turn
- * @author mjsch
+ *  @author mjsch
  */
 public class Character
 {

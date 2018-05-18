@@ -10,6 +10,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+/**
+ * Button for the UI.
+ * @author mjsch
+ */
 public class GameMenuButton extends StackPane
 {
     private Text text_name;

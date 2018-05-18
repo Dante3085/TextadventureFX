@@ -2,6 +2,12 @@ package com.map;
 
 import com.lists.List;
 
+/**
+ *
+ * @param <K>
+ * @param <V>
+ * @author mjsch
+ */
 public class Map<K, V> implements IMap<K, V>
 {
     // Pair oder 2 Listen. Mehr Link Objekte oder mehr Pair Objekte. Pair könnte schneller sein, da es nicht 2 Listen gibt.

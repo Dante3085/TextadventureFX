@@ -1,5 +1,11 @@
 package com.map;
 
+/**
+ *
+ * @param <K>
+ * @param <V>
+ * @author mjsch
+ */
 public class Pair<K, V>
 {
     private K key;

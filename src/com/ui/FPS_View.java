@@ -3,7 +3,12 @@ package com.ui;
 import javafx.animation.AnimationTimer;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 
+/**
+ * Displays fps.
+ * @author mjsch
+ */
 public class FPS_View extends StackPane {
 
     private final long[] frameTimes = new long[100];
@@ -17,6 +22,7 @@ public class FPS_View extends StackPane {
     public FPS_View()
     {
         label = new Label();
+        label.setTextFill(Color.ROYALBLUE);
         label.setFont(label.getFont().font(20));
         frameRateMeter = new AnimationTimer()
         {
@@ -43,10 +49,11 @@ public class FPS_View extends StackPane {
                 }
             }
         };
-        getChildren().addAll(label);
+        getChildren().add(label);
+        initFPSView(false);
     }
 
-    public void initFPSView(boolean msg)
+    private void initFPSView(boolean msg)
     {
         this.enableMsg = msg;
         frameRateMeter.start();

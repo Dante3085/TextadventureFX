@@ -1,5 +1,11 @@
 package com.map;
 
+/**
+ *
+ * @param <K>
+ * @param <V>
+ * @author mjsch
+ */
 public interface IMap<K, V>
 {
     void clear();

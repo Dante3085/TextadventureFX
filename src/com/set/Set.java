@@ -2,11 +2,12 @@ package com.set;
 
 import com.lists.List;
 
-/**@author mjsch
+/**
  * Ideen:
  *  1. Da Hashing-Methoden noch nicht bekannt sind -> naive Implementierung durch normale Array- oder LinkedList.
  *  2. Es muss durch ArrayList und LinkedList iteriert werden, um zu checken, ob ein Element enthalten ist.
  *  3.
+ *  @author mjsch
  */
 
 public class Set<T> implements ISet<T>

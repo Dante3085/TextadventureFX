@@ -1,5 +1,10 @@
 package com.lists;
 
+/**
+ *
+ * @param <T>
+ * @author mjsch
+ */
 public class List<T> implements IList<T>, Iterable<T>
 {
     private String name;

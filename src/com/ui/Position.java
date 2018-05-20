@@ -6,7 +6,7 @@ package com.ui;
  */
 public enum Position
 {
-    FIRST(0, "FIRST"),
+    FIRST(0),
     SECOND(100, FIRST),
     THIRD(200, SECOND),
     FOURTH(300, THIRD),
@@ -15,16 +15,14 @@ public enum Position
     SEVENTH(600, SIXTH),
     EIGHTH(700, SEVENTH),
 
-    DEFAULT(1000, "DEFAULT");
+    DEFAULT(800);
 
-    private int numVal;
-    private String current;
+    private double numVal;
     private Position next;
 
-    private Position(int numVal, String current)
+    private Position(double numVal)
     {
         this.numVal = numVal;
-        this.current = current;
     }
 
     /**
@@ -33,7 +31,7 @@ public enum Position
      * Internally initializes numVal with Constructor for every enum value. (Look above)
      * @param numVal int Value used by enums.
      */
-    private Position(int numVal, Position next)
+    private Position(double numVal, Position next)
     {
         this.numVal = numVal;
         this.next = next;
@@ -45,11 +43,10 @@ public enum Position
      */
     public Position next()
     {
-        if (current != null)
-        {
-            if (current.equals("FIRST"))
-                return EIGHTH;
-        }
+        if (this.equals(FIRST))
+            return EIGHTH;
+        if (this.equals(DEFAULT))
+            return FIRST;
         return next;
     }
 
@@ -57,7 +54,7 @@ public enum Position
      * Returns numerical value of position.
      * @return
      */
-    public int value()
+    public double value()
     {
         return numVal;
     }

@@ -2,6 +2,8 @@ package com.Main;
 
 import com.character.Character;
 import com.character.Skill;
+import com.combat.Combat;
+import com.thread.CustomThread;
 import com.ui.*;
 import javafx.animation.ScaleTransition;
 import javafx.application.Application;
@@ -48,7 +50,12 @@ public class Main extends Application
 
     public static void main(String[] args)
     {
-        launch(args);
+        //launch(args);
+        CustomThread t1 = new CustomThread("CustomThread 1");
+        CustomThread t2 = new CustomThread("CustomThread 2");
+
+        t1.start();
+        t2.start();
     }
 
     public void addLine(double x, double y)
@@ -158,7 +165,7 @@ public class Main extends Application
 //        }
     }
 
-    public void setupSceneKeys()
+    private void setupSceneKeys()
     {
         scene.setOnKeyPressed(event ->
         {
@@ -196,9 +203,9 @@ public class Main extends Application
     /**
      * Assembles Textadventure's main menu with all the buttons and their functionality. Menus are represented by instances of the 'GameMenu' class.
      */
-    public void setupMainMenu()
+    private void setupMainMenu()
     {
-        mainMenu.addButton(new GameMenuButton("Resume", 450, 55));
+        mainMenu.addButton(new GameMenuButton("Turn", 450, 55));
         mainMenu.addButton(new GameMenuButton("Level Up", 450, 55));
         mainMenu.addButton(new GameMenuButton("Items", 450, 55));
         mainMenu.addButton(new GameMenuButton("Abilities", 450, 55));
@@ -211,7 +218,7 @@ public class Main extends Application
 
         GameMenuButton pointer;
 
-        pointer = mainMenu.getButton("Resume");
+        pointer = mainMenu.getButton("Turn");
         pointer.setTranslateX(scene.widthProperty().doubleValue() + 1500);
         pointer.setTranslateY(scene.heightProperty().doubleValue() + 50);
         pointer.setOnMouseClicked(event ->
@@ -307,7 +314,7 @@ public class Main extends Application
         pointer.setTranslateY(scene.heightProperty().doubleValue() + 260);
         pointer.setOnMouseClicked(event ->
         {
-            if (console.getTextArea().isVisible() == true)
+            if (console.getTextArea().isVisible())
                 console.getTextArea().setVisible(false);
             else
                 console.getTextArea().setVisible(true);
@@ -348,7 +355,7 @@ public class Main extends Application
         root.getChildren().add(mainMenu);
     }
 
-    public void setupImages()
+    private void setupImages()
     {
         imgView = new ImageView(new Image(getClass().getResource("../res/DarkSpace.jpg").toExternalForm())); // Muss mit ".." eine Ordnerebene höher gehen, um res zu finden.
         root.getChildren().add(imgView);
@@ -357,7 +364,7 @@ public class Main extends Application
     /**
      * Assembles mainWindow components and shows mainWindow.
      */
-    public void initWindow()
+    private void initWindow()
     {
         mainWindow.setScene(scene);
         mainWindow.setTitle("Textadventure - The Game");
@@ -366,12 +373,20 @@ public class Main extends Application
         mainWindow.show();
     }
 
-    void initConsole()
+    private void setupConsole()
     {
         ta = new TextArea();
         console = new Console(ta);
         root.getChildren().add(ta);
     }
+
+    private void setupFpsView()
+    {
+        FPS_View fps_view = new FPS_View();
+        root.getChildren().add(fps_view);
+    }
+
+
 
     // I decided to outsource all the parts of window assemblement to seperate methods. This makes it easy to read the program's flow in the start() method.
     // Sichtbare Elemente werden anscheinend übereinander gepackt. Werden die Buttons zuerst erstellt und danach das Hintergrundbild, so werden die Buttons von dem Bild überdeckt.
@@ -383,13 +398,8 @@ public class Main extends Application
         setupImages();
         setupMainMenu();
         setupSceneKeys();
-        turnOrderView = new TurnOrderView();
-        FPS_View fps_view = new FPS_View();
-        root.getChildren().addAll(turnOrderView, fps_view);
+        setupFpsView();
         initWindow();
-        initConsole();
-
-        Auron = new Character("Auron", 2000, 100, 458, 120, 40, 20, 10);
-        Tidus = new Character("Tidus", 2000, 100, 100, 120, 40, 20, 10);
+        setupConsole();
     }
 }

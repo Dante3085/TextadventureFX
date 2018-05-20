@@ -47,7 +47,7 @@ public class TurnOrderView extends StackPane
     public void turn()
     {
         for (TurnOrderRec r : turnOrderRecs)
-            r.moveUp(2000);
+            r.moveUp(1000);
     }
 
     /**

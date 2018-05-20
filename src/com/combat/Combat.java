@@ -3,9 +3,11 @@ package com.combat;
 import com.Main.Main;
 import com.lists.List;
 import com.character.Character;
+import com.ui.TurnOrderView;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Scanner;
 
 /**
  * Handles Combat in the Textadventure.
@@ -15,6 +17,16 @@ public class Combat
 {
     ArrayList<Character> party1 = new ArrayList<Character>();
     ArrayList<Character> party2 = new ArrayList<Character>();
+    TurnOrderView turnOrderView = new TurnOrderView();
+
+    public  Combat()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            party1.add(new Character("Party1[" + i + "]", 1000, 100, 20, 5, 9, 3, 2));
+            party2.add(new Character("Party2[" + i + "]", 200, 100, 32, 40, 4555, 32, 25));
+        }
+    }
 
     public Combat(ArrayList<Character> party1, ArrayList<Character> party2)
     {
@@ -24,9 +36,13 @@ public class Combat
 
     public void startCombat()
     {
+        int turn = 1;
+        Scanner s = new Scanner(System.in);
         while (partyHealth(party1) > 0 && partyHealth(party2) > 0)
         {
-
+            turnOrderView.turn();
+            System.out.println("TURN[" + turn++ + "] ...");
+            System.out.println("Entered: " + s.nextInt());
         }
         Main.console.writeToConsole("Combat finished");
     }
@@ -58,5 +74,10 @@ public class Combat
         for (Character c : party)
             health += c.getHp();
         return health;
+    }
+
+    public  TurnOrderView getTurnOrderView()
+    {
+        return turnOrderView;
     }
 }

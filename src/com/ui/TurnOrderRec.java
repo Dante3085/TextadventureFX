@@ -1,7 +1,7 @@
 package com.ui;
 
 import javafx.animation.TranslateTransition;
-import javafx.scene.layout.Pane;
+import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -18,19 +18,22 @@ public class TurnOrderRec extends StackPane
     private double height;
 
     private Rectangle rectangle;
-    private Text text;
+    //private Text text;
     private Position position;
-    private TranslateTransition translateTransition;
+    private TranslateTransition ttRec;
+    private TranslateTransition ttText;
+    private Label label;
 
     /**
      * Default constructor with default values.
      */
     public TurnOrderRec()
     {
-        translateTransition = new TranslateTransition();
+        ttRec = new TranslateTransition();
+        ttText = new TranslateTransition();
         this.width = 10;
         this.height = 10;
-        this.text.setText("DEFAULT");
+        //this.text.setText("DEFAULT");
         this.position = Position.DEFAULT;
     }
 
@@ -47,34 +50,65 @@ public class TurnOrderRec extends StackPane
         this.setHeight(height);
 
         // Objekte initialisieren
-        translateTransition = new TranslateTransition();
+        ttRec = new TranslateTransition();
+        ttText = new TranslateTransition();
         rectangle = new Rectangle(width, height);
-        this.text = new Text(text);
+        //this.text = new Text(text);
+        this.label = new Label(text);
         this.position = position;
 
         rectangle.setFill(Color.RED);
         rectangle.setOpacity(0.6);
-        translateTransition.setNode(this);
+        ttRec.setNode(rectangle);
+        ttText.setNode(label);
 
-        this.text.setTranslateY(this.position.value());
-        rectangle.setTranslateY(this.position.value());
+        //this.text.setTranslateY(this.position.value());
+        //rectangle.setTranslateY(this.position.value());
+        //label.setTranslateY(this.position.value());
         //this.setTranslateY(this.position.value());
 
-        this.getChildren().addAll(rectangle, this.text);
+        this.getChildren().addAll(rectangle, label);
     }
 
+    /**
+     * Moves the TurnOrderRec in it's initial position.
+     * @param duration
+     */
+    public void init(double duration)
+    {
+        // Rectangle
+        ttRec.setFromY(rectangle.getTranslateY());
+        ttRec.setToY(position.value());
+        ttRec.setDuration(Duration.millis(duration));
+
+        // TextLabel
+        ttText.setFromY(label.getTranslateY());
+        ttText.setToY(position.value());
+        ttText.setDuration(Duration.millis(duration));
+
+        ttRec.play();
+        ttText.play();
+    }
+
+    /**
+     * Moves the TurnOrderRec up one position in 'duration' time
+     * @param duration
+     */
     public void moveUp(double duration)
     {
-        //System.out.println("position.value() = " + position.value() + ", position.next().value() = " + position.next().value() + ", rectanlge.getY() = " + rectangle.getY() + ", rectangle.getTranslateY() + " + rectangle.getTranslateY());
-        System.out.println(position.value() + " -> " + position.next().value() + " | rectangle.getY() = " + rectangle.getY() + ", rectangle.getTranslateY() = " + rectangle.getTranslateY()
-                           + ", this.getTranslateY() = " + this.getTranslateY());
-        //translateTransition.setFromY(position.value());
-        translateTransition.setToY(position.next().value());
-        translateTransition.setDuration(Duration.millis(duration));
-        translateTransition.play();
-        position = position.next();
-        System.out.println("NACHER position.current = " + position + "\n");
+        // Rectangle
+        ttRec.setFromY(rectangle.getTranslateY());
+        ttRec.setToY(position.next().value());
+        ttRec.setDuration(Duration.millis(duration));
 
-        //System.out.println("NACHHER position.value() = " + position.value() + ", position.next().value() = " + position.next().value() + ", rectanlge.getY() = " + rectangle.getY() + ", rectangle.getTranslateY() + " + rectangle.getTranslateY() + "/n");
+        // TextLabel
+        ttText.setFromY(label.getTranslateY());
+        ttText.setToY(position.next().value());
+        ttText.setDuration(Duration.millis(duration));
+
+        ttRec.play();
+        ttText.play();
+
+        position = position.next();
     }
 }

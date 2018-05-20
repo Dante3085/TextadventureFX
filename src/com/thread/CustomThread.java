@@ -1,5 +1,9 @@
 package com.thread;
 
+/**
+ * Handles Thread related things in the Application.
+ * @author mjsch
+ */
 public class CustomThread extends Thread
 {
     private String name;

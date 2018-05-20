@@ -42,7 +42,17 @@ public class TurnOrderView extends StackPane
     }
 
     /**
-     * Changes the visual appearance after one turn. Every Rectangle is going to move one step up in the cycle.
+     * Moves every TurnOrderRec to it's initial position.
+     * @param duration
+     */
+    public void init(double duration)
+    {
+        for (TurnOrderRec r : turnOrderRecs)
+            r.init(duration);
+    }
+
+    /**
+     * Moves every TurnOrderRec up one position.
      */
     public void turn()
     {

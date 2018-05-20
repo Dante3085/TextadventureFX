@@ -36,13 +36,19 @@ public class Combat
 
     public void startCombat()
     {
+        turnOrderView.init(2000);
         int turn = 1;
-        Scanner s = new Scanner(System.in);
-        while (partyHealth(party1) > 0 && partyHealth(party2) > 0)
+        while (/*partyHealth(party1) > 0 && partyHealth(party2) > 0*/turn <= 10)
         {
+            try
+            {
+                Thread.sleep(1000);
+            } catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
             turnOrderView.turn();
-            System.out.println("TURN[" + turn++ + "] ...");
-            System.out.println("Entered: " + s.nextInt());
+            Main.console.writeToConsole("TURN: " + turn++);
         }
         Main.console.writeToConsole("Combat finished");
     }

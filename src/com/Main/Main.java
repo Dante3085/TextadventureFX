@@ -46,16 +46,11 @@ public class Main extends Application
 
     Line line;
 
-    TurnOrderView turnOrderView;
+    TurnOrderView turnOrderView = new TurnOrderView();
 
     public static void main(String[] args)
     {
-        //launch(args);
-        CustomThread t1 = new CustomThread("CustomThread 1");
-        CustomThread t2 = new CustomThread("CustomThread 2");
-
-        t1.start();
-        t2.start();
+        launch(args);
     }
 
     public void addLine(double x, double y)
@@ -206,7 +201,7 @@ public class Main extends Application
     private void setupMainMenu()
     {
         mainMenu.addButton(new GameMenuButton("Turn", 450, 55));
-        mainMenu.addButton(new GameMenuButton("Level Up", 450, 55));
+        mainMenu.addButton(new GameMenuButton("Init TurnOrderView", 450, 55));
         mainMenu.addButton(new GameMenuButton("Items", 450, 55));
         mainMenu.addButton(new GameMenuButton("Abilities", 450, 55));
         mainMenu.addButton(new GameMenuButton("Equip", 450, 55));
@@ -226,12 +221,12 @@ public class Main extends Application
             turnOrderView.turn();
         });
 
-        pointer = mainMenu.getButton("Level Up");
+        pointer = mainMenu.getButton("Init TurnOrderView");
         pointer.setTranslateX(scene.widthProperty().doubleValue() + 1500);
         pointer.setTranslateY(scene.heightProperty().doubleValue() + 80);
         pointer.setOnMouseClicked(event ->
         {
-
+            turnOrderView.init(3000);
         });
 
         pointer = mainMenu.getButton("Items");
@@ -401,5 +396,7 @@ public class Main extends Application
         setupFpsView();
         initWindow();
         setupConsole();
+
+        root.getChildren().add(turnOrderView);
     }
 }

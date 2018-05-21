@@ -2,6 +2,7 @@ package com.ui;
 
 import com.Main.Main;
 import com.character.Character;
+import com.exceptions.InvalidTurnOrderException;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.scene.layout.StackPane;
@@ -23,16 +24,53 @@ public class TurnOrderView extends StackPane
     private ArrayList<Character> turnOrder = new ArrayList<>();
     private ArrayList<TurnOrderRec> turnOrderRecs = new ArrayList<>();
 
+    // Above constructors are only help methods to shorten the size of constructors. They aren't meant to be reusable.
+
+    /**
+     * Adds 8 TurnOrderRecs to corresponding ArrayList 'turnOrderRecs'.
+     * Adds those 8 TurnOrderRecs to StackPane as well.
+     */
+    private void setupTurnOrderRecs()
+    {
+        turnOrderRecs.add(new TurnOrderRec(50, 50, this.turnOrder.get(0).getName(), Position.FIRST));
+        turnOrderRecs.add(new TurnOrderRec(50, 50, this.turnOrder.get(1).getName(), Position.SECOND));
+        turnOrderRecs.add(new TurnOrderRec(50, 50, this.turnOrder.get(2).getName(), Position.THIRD));
+        turnOrderRecs.add(new TurnOrderRec(50, 50, this.turnOrder.get(3).getName(), Position.FOURTH));
+        turnOrderRecs.add(new TurnOrderRec(50, 50, this.turnOrder.get(4).getName(), Position.FIFTH));
+        turnOrderRecs.add(new TurnOrderRec(50, 50, this.turnOrder.get(5).getName(), Position.SIXTH));
+        turnOrderRecs.add(new TurnOrderRec(50, 50, this.turnOrder.get(6).getName(), Position.SEVENTH));
+        turnOrderRecs.add(new TurnOrderRec(50, 50, this.turnOrder.get(7).getName(), Position.EIGHTH));
+
+        for (TurnOrderRec r : turnOrderRecs)
+            this.getChildren().add(r);
+
+        this.setTranslateX(50);
+        this.setTranslateY(50);
+    }
+
+    /**
+     * Constructor without Parameters. Creates turnOrder ArrayList with Character Objects from scratch.
+     */
     public TurnOrderView()
     {
-        turnOrderRecs.add(new TurnOrderRec(50, 50, "FIRST", Position.FIRST));
-        turnOrderRecs.add(new TurnOrderRec(50, 50, "SECOND", Position.SECOND));
-        turnOrderRecs.add(new TurnOrderRec(50, 50, "THIRD", Position.THIRD));
-        turnOrderRecs.add(new TurnOrderRec(50, 50, "FOURTH", Position.FOURTH));
-        turnOrderRecs.add(new TurnOrderRec(50, 50, "FIFTH", Position.FIFTH));
-        turnOrderRecs.add(new TurnOrderRec(50, 50, "SIXTH", Position.SIXTH));
-        turnOrderRecs.add(new TurnOrderRec(50, 50, "SEVENTH", Position.SEVENTH));
-        turnOrderRecs.add(new TurnOrderRec(50, 50, "EIGHTH", Position.EIGHTH));
+        for (int i = 0; i < 8; i++)
+            turnOrder.add(new Character("Name[" + i + "]", 1000, 100, 2, 3434, 2, 3, 1));
+
+        setupTurnOrderRecs();
+
+        this.setTranslateX(50);
+        this.setTranslateY(50);
+    }
+
+    /**
+     * Identical to parameterless constructor, except that turnOrder ArrayList with Character Objects is passed as parameter.
+     * @param turnOrder
+     */
+    public TurnOrderView(ArrayList<Character> turnOrder)
+    {
+        this.turnOrder = turnOrder;
+
+        setupTurnOrderRecs();
 
         for (TurnOrderRec r : turnOrderRecs)
             this.getChildren().add(r);
@@ -75,10 +113,26 @@ public class TurnOrderView extends StackPane
         animation.play();
     }
 
+    /**
+     * Sets the order of the TurnOrderRecs by the sorted turnOrder ArrayList passed to this method.
+     * // TODO: Getting Character objects as parameters is unnecessary, since only their speed attribute is relevant.
+     * // TODO: Unsorted turnOrder ArrayList could be passed as an argument. Faulty design!
+     * // TODO: Update Method to reorganize the order of TurnOrderRecs is necessary.
+     * @param turnOrder
+     */
     public void setTurnOrder(ArrayList<Character> turnOrder)
     {
         if (turnOrder.size() != 8)
+        {
+            try
+            {
+                throw new InvalidTurnOrderException("turnOrder.size() has to be 8.");
+            } catch (InvalidTurnOrderException e)
+            {
+                e.printStackTrace();
+            }
             return;
-
+        }
+        this.turnOrder = turnOrder;
     }
 }

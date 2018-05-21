@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.text.Font?>
+
+<HBox xmlns:fx="http://javafx.com/fxml/1" >
+    <padding>
+        <Insets top="12" left="12" right="12" bottom="12"/>
+    </padding>
+    <TextArea
+            prefHeight="64.0"
+            prefWidth="402.0"
+            style="-fx-control-inner-background:#000000; -fx-font-family: Consolas; -fx-highlight-fill: #00ff00; -fx-highlight-text-fill: #000000; -fx-text-fill: #00ff00; "
+            text="Terminal">
+
+        <font>
+            <Font name="System Bold" size="14.0" />
+        </font>
+    </TextArea>
+</HBox>

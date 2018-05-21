@@ -7,6 +7,7 @@ import com.thread.CustomThread;
 import com.ui.*;
 import javafx.animation.ScaleTransition;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -31,7 +32,7 @@ public class Main extends Application
 {
     public static Stage mainWindow;
     private Pane root = new Pane();
-    private Scene scene = new Scene(root);
+    private Scene scene;
     private ImageView imgView;
 
     GameMenu mainMenu = new GameMenu("MainMenu");
@@ -390,6 +391,8 @@ public class Main extends Application
     {
         mainWindow = primaryStage;
 
+        scene = new Scene(root, FXMLLoader.load(getClass().getResource("Y:\\2_IT_Informatik\\2_Programmierung\\12_IntelliJ_IDEA_Entwicklung\\TextadventureJavaFX\\src\\com\\res\\StyledTextArea.fxml")));
+
         setupImages();
         setupMainMenu();
         setupSceneKeys();
@@ -397,6 +400,7 @@ public class Main extends Application
         initWindow();
         setupConsole();
 
-        root.getChildren().add(turnOrderView);
+        TTextArea tTextArea = new TTextArea();
+        root.getChildren().addAll(turnOrderView, tTextArea);
     }
 }

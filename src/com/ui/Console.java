@@ -88,7 +88,7 @@ public class Console extends OutputStream
     }
 
     /**
-     * Sends text to a TextArea(Console) that is displayed on the application's window.
+     * Sends text to a TTextArea(Console) that is displayed on the application's window.
      * Messages can be directly seen in the application.
      * @param input
      */

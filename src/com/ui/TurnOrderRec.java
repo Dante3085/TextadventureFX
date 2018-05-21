@@ -26,6 +26,7 @@ public class TurnOrderRec extends StackPane
      * Default constructor with default values.
      */
     public TurnOrderRec()
+
     {
         ttRec = new TranslateTransition();
         ttText = new TranslateTransition();

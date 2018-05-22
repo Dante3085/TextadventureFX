@@ -391,7 +391,8 @@ public class Main extends Application
     {
         mainWindow = primaryStage;
 
-        scene = new Scene(root, FXMLLoader.load(getClass().getResource("Y:\\2_IT_Informatik\\2_Programmierung\\12_IntelliJ_IDEA_Entwicklung\\TextadventureJavaFX\\src\\com\\res\\StyledTextArea.fxml")));
+        scene = new Scene(root);
+
 
         setupImages();
         setupMainMenu();

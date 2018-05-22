@@ -15,6 +15,7 @@ public class TTextArea extends TextArea
     {
         // Look
         this.setOpacity(0.6);
+        this.setStyle("-fx-background-color:orangered;");
 
         // Position
         this.setTranslateX(200);

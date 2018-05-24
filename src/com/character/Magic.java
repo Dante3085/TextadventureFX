@@ -6,4 +6,5 @@ package com.character;
  */
 public enum Magic
 {
+    FIRE
 }

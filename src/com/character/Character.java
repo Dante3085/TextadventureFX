@@ -1,6 +1,9 @@
 package com.character;
 
 import com.Main.Main;
+import com.exceptions.ItemNotRegisteredException;
+import com.exceptions.MagicNotRegisteredException;
+import com.exceptions.SkillNotRegisteredException;
 
 import java.util.HashMap;
 
@@ -27,6 +30,12 @@ public class Character
     private int agility;
     private int speed;
 
+    private int DMG;      // Math.random() * DMGRANGE + DMGBASE.
+    private int DMGRANGE; // UNDEFINED
+    private int DMGBASE;  // Attacker's strength (or whatever is adequate to that) - Defender's defense (or whatever is adequate to that).
+
+    HashMap<Item, ICallback> items = new HashMap<Item, ICallback>();
+    HashMap<Magic, ICallback> magics = new HashMap<Magic, ICallback>();
     HashMap<Skill, ICallback> skills = new HashMap<Skill, ICallback>();
 
     /**
@@ -43,15 +52,6 @@ public class Character
         this.wit = 0;
         this.agility = 0;
         this.speed = 0;
-
-//        try
-//        {
-//            Main.console.writeToConsole("NEW CHARACTER \n\t" + this.toString());
-//        } catch (NullPointerException e)
-//        {
-//            System.out.println("@com.character.Character Character(): CONSOLE_NOT_INITIALIZED");
-//            e.printStackTrace();
-//        }
     }
 
     /**
@@ -79,33 +79,74 @@ public class Character
         setupSkills();
     }
 
-    public void registerSkill(Skill skill, ICallback callback)
+    /**
+     * Calculates a Damage value which ranges from (Attacker's power to inflict damage (atk) - Defender's power to reduce damage (def)) (<- DMGBASE)
+     * to (DMGBASE + DMGRANGE)
+     * Example: atk = 20, def = 3, DMGRANGE = 10 => DMGBASE = 17 => Possible damage values range from 17 - 27.
+     *
+     * @param atk Attacker's power to inflict damage.
+     * @param def Defender's power to reduce damage.
+     * @return
+     */
+    private int calcDamage(int atk, int def)
+    {
+        int DMG;      // Math.random() * DMGRANGE + DMGBASE. Actual damage value that is being returned.
+        int DMGRANGE = 1; // UNDEFINED, meaning that as of now it is completely mutable. Though it shouldn't stray away too far from DMGBASE, since that is the actual effect of Character attributes. Suggestion: 5 to 15.
+        int DMGBASE = atk - def;  // Attacker's strength (or whatever is adequate to that) - Defender's defense (or whatever is adequate to that).
+
+        DMG = (int)(Math.random() * DMGRANGE + DMGBASE);
+        System.out.println(DMG);
+        return DMG;
+    }
+
+    // 3 Methods to register Character actions.
+    private void registerItem(Item item, ICallback callback)
+    {
+        items.put(item, callback);
+    }
+    private void registerMagic(Magic magic, ICallback callback)
+    {
+        magics.put(magic, callback);
+    }
+    private void registerSkill(Skill skill, ICallback callback)
     {
         skills.put(skill, callback);
     }
 
-    public void setupSkills()
+    // 3 Methods to setup a few Character actions.
+    private void setupItems()
+    {
+        registerItem(Item.POTION, new ICallback()
+        {
+            @Override
+            public void action(Character target)
+            {
+                target.hp += 50; // TODO: target mustn't be healed above it's MAXHP. Maybe attribute MAXHP ?
+            }
+        });
+    }
+    private void setupMagics()
+    {
+        registerMagic(Magic.FIRE, new ICallback()
+        {
+            @Override
+            public void action(Character target)
+            {
+                target.hp -= 50; // TODO: Damage lasts several turns. Damage dependant on monster type. Damage dependant on magic resistance, maybe fire resistance.
+            }
+        });
+    }
+    private void setupSkills()
     {
         registerSkill(Skill.HEAVY_SWING, new ICallback()
         {
             @Override
             public void action(Character target)
             {
-                if (target.isAlive() == false)
-                {
-                    Main.console.writeToConsole("isAlive(" + target.name + ") = false");
-                    return;
-                }
-
-                Main.console.writeToConsole(Character.this.name + "(HEAVY_SWING) -> " + target.name + "\n\t" + target.hp);
-
                 Character.this.strength += 5;
-                if (Character.this.strength <= target.defence) {}
-                else
-                    target.hp -= (Character.this.strength - target.defence);
+                if (Character.this.strength > target.defence)
+                    target.hp -= calcDamage(Character.this.strength, target.defence);
                 Character.this.strength -= 5;
-
-                Main.console.writeToConsole("\t" + target.hp);
             }
         });
 
@@ -114,21 +155,10 @@ public class Character
             @Override
             public void action(Character target)
             {
-                if (target.isAlive() == false)
-                {
-                    Main.console.writeToConsole("isAlive(" + target.name + ") = false");
-                    return;
-                }
-
-                Main.console.writeToConsole(Character.this.name + "(QUICK_SWING) -> " + target.name + "\n\t" + target.hp);
-
                 Character.this.strength += 2;
-                if (Character.this.strength <= target.defence) {}
-                else
-                    target.hp -= (Character.this.strength - target.defence);
+                if (Character.this.strength > target.defence)
+                    target.hp -= calcDamage(Character.this.strength, target.defence);
                 Character.this.strength -= 2;
-
-                Main.console.writeToConsole("\t" + target.hp);
             }
         });
 
@@ -137,67 +167,70 @@ public class Character
             @Override
             public void action(Character target)
             {
-                if (target.isAlive() == false)
-                {
-                    Main.console.writeToConsole("isAlive(" + target.name + ") = false");
-                    return;
-                }
-
-                Main.console.writeToConsole(Character.this.name + "(BLOODLETTER) -> " + target.name + "\n\t" + target.hp);
-
                 Character.this.strength += 200;
-                if (Character.this.strength <= target.defence) {}
-                else
-                    target.hp -= (Character.this.strength - target.defence);
+                if (Character.this.strength > target.defence)
+                    target.hp -= calcDamage(Character.this.strength, target.defence);
                 Character.this.strength -= 200;
                 Character.this.hp -= 200;
-
-                Main.console.writeToConsole("\t" + target.hp);
             }
         });
     }
 
+    // 6 Methods for Character actions.
+    public void action_item(Character target, Item item)
+    {
+        if (items.containsKey(item))
+        {
+            items.get(item).action(target);
+            return;
+        }
+        try
+        {
+            throw new ItemNotRegisteredException();
+        } catch (ItemNotRegisteredException e)
+        {
+            e.printStackTrace();
+        }
+    }
+    public void action_magic(Character target, Magic magic)
+    {
+        if (magics.containsKey(magic))
+        {
+            magics.get(magic).action(target);
+            return;
+        }
+        try
+        {
+            throw new MagicNotRegisteredException();
+        } catch (MagicNotRegisteredException e)
+        {
+            e.printStackTrace();
+        }
+    }
     public void action_skill(Character target, Skill skill)
     {
         if (skills.containsKey(skill))
+        {
             skills.get(skill).action(target);
+            return;
+        }
+        try
+        {
+            throw new SkillNotRegisteredException();
+        } catch (SkillNotRegisteredException e)
+        {
+            e.printStackTrace();
+        }
     }
-
     public void action_attack(Character target)
     {
         target.hp -= (this.strength - target.defence);
     }
-
     public void action_defend()
     {
         // TODO: Subtract defence boost after a certain amount of turns.
         this.defence += 10;
     }
-
-    public void action_magic(Character target, Magic magic)
-    {
-        switch (magic)
-        {
-            default:
-            {
-
-                break;
-            }
-        }
-    }
-
-    public void action_item(Character target, Item item)
-    {
-        switch (item)
-        {
-            default:
-            {
-
-                break;
-            }
-        }
-    }
-
     public void action_endturn()
     {
 

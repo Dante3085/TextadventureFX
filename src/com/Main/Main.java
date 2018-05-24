@@ -1,6 +1,7 @@
 package com.Main;
 
 import com.character.Character;
+import com.character.Item;
 import com.character.Skill;
 import com.combat.Combat;
 import com.thread.CustomThread;
@@ -51,7 +52,14 @@ public class Main extends Application
 
     public static void main(String[] args)
     {
-        launch(args);
+        // launch(args);
+
+        Character auron = new Character("Auron", 1500, 100, 69, 70, 1, 1, 1);
+        System.out.println(auron.toString());
+        auron.action_skill(auron, Skill.QUICK_SWING);
+        System.out.println(auron.toString());
+
+        System.exit(0);
     }
 
     public void addLine(double x, double y)
@@ -64,6 +72,7 @@ public class Main extends Application
 
         root.getChildren().add(line);
     }
+
 
     public void lineAnimationExpandCollapse(int expand, double seconds)
     {

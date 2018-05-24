@@ -7,4 +7,5 @@ package com.character;
  */
 public enum Item
 {
+    POTION
 }

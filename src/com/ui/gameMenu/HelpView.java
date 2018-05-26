@@ -1,4 +1,4 @@
-package com.ui;
+package com.ui.gameMenu;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;

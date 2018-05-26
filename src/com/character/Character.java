@@ -1,8 +1,8 @@
 package com.character;
 
-import com.Main.Main;
 import com.exceptions.ItemNotRegisteredException;
 import com.exceptions.MagicNotRegisteredException;
+import com.exceptions.RevengeMoveNotRegisteredException;
 import com.exceptions.SkillNotRegisteredException;
 
 import java.util.HashMap;
@@ -30,6 +30,8 @@ public class Character
     private int agility;
     private int speed;
 
+    private int revengeValue = 0;
+
     private int DMG;      // Math.random() * DMGRANGE + DMGBASE.
     private int DMGRANGE; // UNDEFINED
     private int DMGBASE;  // Attacker's strength (or whatever is adequate to that) - Defender's defense (or whatever is adequate to that).
@@ -37,11 +39,11 @@ public class Character
     HashMap<Item, ICallback> items = new HashMap<Item, ICallback>();
     HashMap<Magic, ICallback> magics = new HashMap<Magic, ICallback>();
     HashMap<Skill, ICallback> skills = new HashMap<Skill, ICallback>();
+    HashMap<RevengeMove, ICallback> revengeMoves = new HashMap<RevengeMove, ICallback>();
 
     /**
-     *
+     * Default Constructor
      */
-    // Standard Constructor
     public Character()
     {
         this.name = "NO_NAME";
@@ -77,6 +79,47 @@ public class Character
         this.speed = speed;
 
         setupSkills();
+        setupRevengeMoves();
+    }
+
+    /**
+     * Increases revengeValue by revengeModifier value of a Skill or Magic.
+     * @param revengeModifier
+     */
+    private void updateRevengeValue(int revengeModifier)
+    {
+        revengeValue += revengeModifier;
+    }
+
+    /**
+     * Checks if one of several revengeValueThresholds has been reached or surpassed.
+     * If that is the case, a corresponding RevengeMove will be executed on either the passed 'target'
+     * or a friendly Character. Defensive, healing, ... RevengeMoves will most likely be executed on
+     * friendly Characters.
+     * @param target
+     * @return
+     */
+    private boolean reachedRevengeThreshold(Character target)
+    {
+        if (revengeValue >= 20)
+        {
+            action_revengeMove(target, RevengeMove.A);
+            revengeValue = 0;
+            return true;
+        }
+        if (revengeValue >= 10)
+        {
+            action_revengeMove(target, RevengeMove.B);
+            revengeValue = 0;
+            return true;
+        }
+        if (revengeValue >= 5)
+        {
+            action_revengeMove(target, RevengeMove.C);
+            revengeValue = 0;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -99,7 +142,6 @@ public class Character
         return DMG;
     }
 
-    // 3 Methods to register Character actions.
     private void registerItem(Item item, ICallback callback)
     {
         items.put(item, callback);
@@ -112,8 +154,11 @@ public class Character
     {
         skills.put(skill, callback);
     }
+    private void registerRevengeMove(RevengeMove revengeMove, ICallback callback)
+    {
+        revengeMoves.put(revengeMove, callback);
+    }
 
-    // 3 Methods to setup a few Character actions.
     private void setupItems()
     {
         registerItem(Item.POTION, new ICallback()
@@ -175,8 +220,66 @@ public class Character
             }
         });
     }
+    private void setupRevengeMoves()
+    {
+        registerRevengeMove(RevengeMove.A, new ICallback()
+        {
+            @Override
+            public void action(Character target)
+            {
+                target.strength += 10;
+                if (target.strength > Character.this.defence)
+                    Character.this.hp -= calcDamage(target.strength, Character.this.defence);
+                target.strength -= 10;
+            }
+        });
+    }
 
-    // 6 Methods for Character actions.
+    public void action_attack(Character target)
+    {
+        target.hp -= (this.strength - target.defence);
+        target.updateRevengeValue(1);
+        target.reachedRevengeThreshold(this);
+    }
+    public void action_defend()
+    {
+        // TODO: Subtract defence boost after a certain amount of turns.
+        this.defence += 10;
+    }
+    public void action_skill(Character target, Skill skill)
+    {
+        if (skills.containsKey(skill))
+        {
+            skills.get(skill).action(target);
+            target.updateRevengeValue(skill.revengeModifier);
+            target.reachedRevengeThreshold(this);
+            return;
+        }
+        try
+        {
+            throw new SkillNotRegisteredException();
+        } catch (SkillNotRegisteredException e)
+        {
+            e.printStackTrace();
+        }
+    }
+    public void action_magic(Character target, Magic magic)
+    {
+        if (magics.containsKey(magic))
+        {
+            magics.get(magic).action(target);
+            target.updateRevengeValue(magic.revengeModifier);
+            target.reachedRevengeThreshold(this);
+            return;
+        }
+        try
+        {
+            throw new MagicNotRegisteredException();
+        } catch (MagicNotRegisteredException e)
+        {
+            e.printStackTrace();
+        }
+    }
     public void action_item(Character target, Item item)
     {
         if (items.containsKey(item))
@@ -192,48 +295,24 @@ public class Character
             e.printStackTrace();
         }
     }
-    public void action_magic(Character target, Magic magic)
-    {
-        if (magics.containsKey(magic))
-        {
-            magics.get(magic).action(target);
-            return;
-        }
-        try
-        {
-            throw new MagicNotRegisteredException();
-        } catch (MagicNotRegisteredException e)
-        {
-            e.printStackTrace();
-        }
-    }
-    public void action_skill(Character target, Skill skill)
-    {
-        if (skills.containsKey(skill))
-        {
-            skills.get(skill).action(target);
-            return;
-        }
-        try
-        {
-            throw new SkillNotRegisteredException();
-        } catch (SkillNotRegisteredException e)
-        {
-            e.printStackTrace();
-        }
-    }
-    public void action_attack(Character target)
-    {
-        target.hp -= (this.strength - target.defence);
-    }
-    public void action_defend()
-    {
-        // TODO: Subtract defence boost after a certain amount of turns.
-        this.defence += 10;
-    }
     public void action_endturn()
     {
 
+    }
+    private void action_revengeMove(Character target, RevengeMove revengeMove)
+    {
+        if (revengeMoves.containsKey(revengeMove))
+        {
+            revengeMoves.get(revengeMove).action(target);
+            return;
+        }
+        try
+        {
+            throw new RevengeMoveNotRegisteredException();
+        } catch (RevengeMoveNotRegisteredException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public boolean isAlive()

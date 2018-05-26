@@ -6,7 +6,19 @@ package com.character;
  */
 public enum Skill
 {
-    HEAVY_SWING,
-    QUICK_SWING,
-    BLOODLETTER
+    HEAVY_SWING(10),
+    QUICK_SWING(20),
+    BLOODLETTER(30);
+
+    int revengeModifier;
+
+    private Skill(int revengeModifier)
+    {
+        this.revengeModifier = revengeModifier;
+    }
+
+    public int revengeModifier()
+    {
+        return revengeModifier;
+    }
 }

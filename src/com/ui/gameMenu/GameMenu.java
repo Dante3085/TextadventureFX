@@ -1,4 +1,4 @@
-package com.ui;
+package com.ui.gameMenu;
 
 import javafx.scene.control.Slider;
 import javafx.scene.layout.VBox;

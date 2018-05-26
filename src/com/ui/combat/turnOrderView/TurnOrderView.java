@@ -1,14 +1,10 @@
-package com.ui;
+package com.ui.combat.turnOrderView;
 
-import com.Main.Main;
 import com.character.Character;
 import com.exceptions.InvalidTurnOrderException;
-import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.ui;
+package com.ui.gameMenu;
 
 import javafx.geometry.Pos;
 import javafx.scene.effect.DropShadow;

@@ -1,14 +1,14 @@
 package com.Main;
 
 import com.character.Character;
-import com.character.Item;
 import com.character.Skill;
-import com.combat.Combat;
-import com.thread.CustomThread;
 import com.ui.*;
+import com.ui.gameMenu.CharacterView;
+import com.ui.gameMenu.GameMenu;
+import com.ui.gameMenu.GameMenuButton;
+import com.ui.combat.turnOrderView.TurnOrderView;
 import javafx.animation.ScaleTransition;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -52,14 +52,13 @@ public class Main extends Application
 
     public static void main(String[] args)
     {
-        // launch(args);
+        //launch(args);
+        Character auron = new Character("Auron", 10, 10, 10, 10, 10, 10, 10);
+        Character tidus = new Character("Tidus", 10, 10, 10, 10, 10, 10, 10);
 
-        Character auron = new Character("Auron", 1500, 100, 69, 70, 1, 1, 1);
-        System.out.println(auron.toString());
-        auron.action_skill(auron, Skill.QUICK_SWING);
-        System.out.println(auron.toString());
-
-        System.exit(0);
+        System.out.println(auron.toString() + "\n" + tidus.toString());
+        auron.action_skill(tidus, Skill.BLOODLETTER);
+        System.out.println(auron.toString() + "\n" + tidus.toString());
     }
 
     public void addLine(double x, double y)
@@ -412,5 +411,8 @@ public class Main extends Application
 
         TTextArea tTextArea = new TTextArea();
         root.getChildren().addAll(turnOrderView, tTextArea);
+
+        CharacterView auron = new CharacterView("Auron", "2000", "167");
+        root.getChildren().add(auron);
     }
 }

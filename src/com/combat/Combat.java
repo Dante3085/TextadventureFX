@@ -1,13 +1,11 @@
 package com.combat;
 
 import com.Main.Main;
-import com.lists.List;
 import com.character.Character;
-import com.ui.TurnOrderView;
+import com.ui.combat.turnOrderView.TurnOrderView;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Scanner;
 
 /**
  * Handles Combat in the Textadventure.

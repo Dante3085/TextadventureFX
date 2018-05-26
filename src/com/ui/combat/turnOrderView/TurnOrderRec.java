@@ -1,4 +1,4 @@
-package com.ui;
+package com.ui.combat.turnOrderView;
 
 import javafx.animation.TranslateTransition;
 import javafx.scene.control.Label;

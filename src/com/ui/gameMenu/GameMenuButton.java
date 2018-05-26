@@ -1,4 +1,4 @@
-package com.ui;
+package com.ui.gameMenu;
 
 import com.Main.Main;
 import javafx.geometry.Pos;

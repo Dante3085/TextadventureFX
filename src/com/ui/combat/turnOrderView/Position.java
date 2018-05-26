@@ -1,4 +1,4 @@
-package com.ui;
+package com.ui.combat.turnOrderView;
 
 /**
  * Enum that defines all the positions that a TurnOrderRec can be in.

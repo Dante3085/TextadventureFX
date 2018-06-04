@@ -52,13 +52,7 @@ public class Main extends Application
 
     public static void main(String[] args)
     {
-        //launch(args);
-        Character auron = new Character("Auron", 10, 10, 10, 10, 10, 10, 10);
-        Character tidus = new Character("Tidus", 10, 10, 10, 10, 10, 10, 10);
-
-        System.out.println(auron.toString() + "\n" + tidus.toString());
-        auron.action_skill(tidus, Skill.BLOODLETTER);
-        System.out.println(auron.toString() + "\n" + tidus.toString());
+        launch(args);
     }
 
     public void addLine(double x, double y)
@@ -413,6 +407,8 @@ public class Main extends Application
         root.getChildren().addAll(turnOrderView, tTextArea);
 
         CharacterView auron = new CharacterView("Auron", "2000", "167");
+        auron.setTranslateX(200);
+        auron.setTranslateY(200);
         root.getChildren().add(auron);
     }
 }

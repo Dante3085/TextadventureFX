@@ -11,14 +11,15 @@ import java.util.Comparator;
  * Handles Combat in the Textadventure.
  * @author mjsch
  */
-public class Combat
+public class Combat implements Runnable
 {
     ArrayList<Character> party1 = new ArrayList<Character>();
     ArrayList<Character> party2 = new ArrayList<Character>();
-    TurnOrderView turnOrderView = new TurnOrderView();
+    TurnOrderView turnOrderView;
 
-    public  Combat()
+    public  Combat(TurnOrderView turnOrderView)
     {
+        this.turnOrderView = turnOrderView;
         for (int i = 0; i < 4; i++)
         {
             party1.add(new Character("Party1[" + i + "]", 1000, 100, 20, 5, 9, 3, 2));
@@ -32,15 +33,21 @@ public class Combat
         this.party2 = party2;
     }
 
+    @Override
+    public void run()
+    {
+        startCombat();
+    }
+
     public void startCombat()
     {
         turnOrderView.init(2000);
         int turn = 1;
-        while (/*partyHealth(party1) > 0 && partyHealth(party2) > 0*/turn <= 10)
+        while (/*partyHealth(party1) > 0 && partyHealth(party2) > 0*/true)
         {
             try
             {
-                Thread.sleep(1000);
+                Thread.sleep(1500);
             } catch (InterruptedException e)
             {
                 e.printStackTrace();
@@ -48,7 +55,6 @@ public class Combat
             turnOrderView.turn();
             Main.console.writeToConsole("TURN: " + turn++);
         }
-        Main.console.writeToConsole("Combat finished");
     }
 
     public ArrayList<Character> turnOrder()

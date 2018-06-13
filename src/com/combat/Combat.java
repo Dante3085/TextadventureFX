@@ -6,6 +6,7 @@ import com.ui.combat.turnOrderView.TurnOrderView;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.logging.Logger;
 
 /**
  * Handles Combat in the Textadventure.
@@ -13,6 +14,8 @@ import java.util.Comparator;
  */
 public class Combat implements Runnable
 {
+    private static final Logger m_log = Logger.getLogger(Combat.class.getName());
+
     ArrayList<Character> party1 = new ArrayList<Character>();
     ArrayList<Character> party2 = new ArrayList<Character>();
     TurnOrderView turnOrderView;
@@ -25,12 +28,14 @@ public class Combat implements Runnable
             party1.add(new Character("Party1[" + i + "]", 1000, 100, 20, 5, 9, 3, 2));
             party2.add(new Character("Party2[" + i + "]", 200, 100, 32, 40, 4555, 32, 25));
         }
+        m_log.info("Combat initialisiert.");
     }
 
     public Combat(ArrayList<Character> party1, ArrayList<Character> party2)
     {
         this.party1 = party1;
         this.party2 = party2;
+        m_log.info("Combat initialisiert.");
     }
 
     @Override
@@ -41,6 +46,7 @@ public class Combat implements Runnable
 
     public void startCombat()
     {
+        m_log.info("Combat started.");
         turnOrderView.init(2000);
         int turn = 1;
         while (/*partyHealth(party1) > 0 && partyHealth(party2) > 0*/true)

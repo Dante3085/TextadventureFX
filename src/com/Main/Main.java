@@ -2,12 +2,16 @@ package com.Main;
 
 import com.character.Character;
 import com.character.Skill;
+import com.combat.Combat;
 import com.ui.*;
 import com.ui.gameMenu.CharacterView;
 import com.ui.gameMenu.GameMenu;
 import com.ui.gameMenu.GameMenuButton;
 import com.ui.combat.turnOrderView.TurnOrderView;
+import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
+import javafx.animation.SequentialTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -36,6 +40,8 @@ public class Main extends Application
     private Scene scene;
     private ImageView imgView;
 
+    private final int offset = 1900;
+
     GameMenu mainMenu = new GameMenu("MainMenu");
 
     TextArea ta;
@@ -49,6 +55,21 @@ public class Main extends Application
     Line line;
 
     TurnOrderView turnOrderView = new TurnOrderView();
+
+    boolean buttonsShifted = false;
+
+    TranslateTransition tt_btn_turn              = new TranslateTransition(new Duration(500));
+    TranslateTransition tt_btn_initTurnOrderView = new TranslateTransition(new Duration(500));
+    TranslateTransition tt_btn_items             = new TranslateTransition(new Duration(500));
+    TranslateTransition tt_btn_abilities         = new TranslateTransition(new Duration(500));
+    TranslateTransition tt_btn_equip             = new TranslateTransition(new Duration(500));
+    TranslateTransition tt_btn_status            = new TranslateTransition(new Duration(500));
+    TranslateTransition tt_btn_options           = new TranslateTransition(new Duration(500));
+    TranslateTransition tt_btn_console           = new TranslateTransition(new Duration(500));
+    TranslateTransition tt_btn_exit              = new TranslateTransition(new Duration(500));
+    TranslateTransition tt_btn_attackTidus       = new TranslateTransition(new Duration(500));
+
+    SequentialTransition st_buttons;
 
     public static void main(String[] args)
     {
@@ -85,84 +106,6 @@ public class Main extends Application
         }
     }
 
-    public void setupTranslateTransitions()
-    {
-//        tt_gmbResume.setToX(-30);
-//        tt_gmbLvlUp.setToX(-30);
-//        tt_gmbItems.setToX(-30);
-//        tt_gmbAbilities.setToX(-30);
-//        tt_gmbEquip.setToX(-30);
-//        tt_gmbStatus.setToX(-30);
-//        tt_gmbOptions.setToX(-30);
-//        tt_gmbExit.setToX(-30);
-    }
-
-    public void gameMenuExpandCollapse(String action)
-    {
-//        if (action.equals("expand"))
-//        {
-//            tt_gmbResume.setToX(-30);
-//            tt_gmbLvlUp.setToX(-30);
-//            tt_gmbItems.setToX(-30);
-//            tt_gmbAbilities.setToX(-30);
-//            tt_gmbEquip.setToX(-30);
-//            tt_gmbStatus.setToX(-30);
-//            tt_gmbOptions.setToX(-30);
-//            tt_gmbExit.setToX(-30);
-//
-//            /*gameMenu.setVisible(true);
-//            ft_gameMenu.setFromValue(0);
-//            ft_gameMenu.setToValue(1);
-//
-//            ft_textArea.setFromValue(1);
-//            ft_textArea.setToValue(0);
-//            st.setOnFinished(event ->
-//            {
-//                gameMenu.setVisible(true);
-//                ta.setVisible(false);
-//            });
-//
-//            ft_gameMenu.play();
-//            ft_textArea.play();
-//            st.play();*/
-//            lineAnimationExpandCollapse(1, 0.25);
-//            /*helpView.controlTextScrolling(true, 10000);*/
-//
-//            gmbsVisible = true;
-//        }
-//
-//        else if (action.equals("collapse"))
-//        {
-//            tt_gmbResume.setToX(1900);
-//            tt_gmbLvlUp.setToX(1900);
-//            tt_gmbItems.setToX(1900);
-//            tt_gmbAbilities.setToX(1900);
-//            tt_gmbEquip.setToX(1900);
-//            tt_gmbStatus.setToX(1900);
-//            tt_gmbOptions.setToX(1900);
-//            tt_gmbExit.setToX(1900);
-//
-//            /*ft_gameMenu.setFromValue(1);
-//            ft_gameMenu.setToValue(0);
-//
-//            ft_textArea.setFromValue(0);
-//            ft_textArea.setToValue(1);
-//            st.setOnFinished(event ->
-//            {
-//                gameMenu.setVisible(false);
-//                ta.setVisible(true);
-//            });
-//
-//            st.play();
-//            ft_gameMenu.play();
-//            ft_textArea.play();*/
-//            lineAnimationExpandCollapse(0, 0.25);
-//            /*helpView.controlTextScrolling(false, 0);*/
-//
-//            gmbsVisible = false;
-//        }
-    }
-
     private void setupSceneKeys()
     {
         scene.setOnKeyPressed(event ->
@@ -179,11 +122,8 @@ public class Main extends Application
             {
                 case ESCAPE:
                 {
-                    if (mainMenu.isVisible() == true)
-                        mainMenu.setVisible(false);
-                    else
-                        mainMenu.setVisible(true);
-                    break;
+                    if (!buttonsShifted)
+                        st_buttons.play();
                 }
 
                 case CIRCUMFLEX:
@@ -203,33 +143,33 @@ public class Main extends Application
      */
     private void setupMainMenu()
     {
-        mainMenu.addButton(new GameMenuButton("Turn", 450, 55));
-        mainMenu.addButton(new GameMenuButton("Init TurnOrderView", 450, 55));
-        mainMenu.addButton(new GameMenuButton("Items", 450, 55));
-        mainMenu.addButton(new GameMenuButton("Abilities", 450, 55));
-        mainMenu.addButton(new GameMenuButton("Equip", 450, 55));
-        mainMenu.addButton(new GameMenuButton("Status", 450, 55));
-        mainMenu.addButton(new GameMenuButton("Options", 450, 55));
-        mainMenu.addButton(new GameMenuButton("Console", 450, 55));
-        mainMenu.addButton(new GameMenuButton("Exit", 450, 55));
-        mainMenu.addButton(new GameMenuButton("Attack Tidus", 450, 55));
+        mainMenu.addButton(new GameMenuButton("Turn", 450, 55              ));
+        mainMenu.addButton(new GameMenuButton("Start Combat", 450, 55));
+        mainMenu.addButton(new GameMenuButton("Items", 450, 55             ));
+        mainMenu.addButton(new GameMenuButton("Abilities", 450, 55         ));
+        mainMenu.addButton(new GameMenuButton("Equip", 450, 55             ));
+        mainMenu.addButton(new GameMenuButton("Status", 450, 55            ));
+        mainMenu.addButton(new GameMenuButton("Options", 450, 55           ));
+        mainMenu.addButton(new GameMenuButton("Console", 450, 55           ));
+        mainMenu.addButton(new GameMenuButton("Exit", 450, 55              ));
+        mainMenu.addButton(new GameMenuButton("Attack Tidus", 450, 55      ));
 
         GameMenuButton pointer;
 
         pointer = mainMenu.getButton("Turn");
-        pointer.setTranslateX(scene.widthProperty().doubleValue() + 1500);
-        pointer.setTranslateY(scene.heightProperty().doubleValue() + 50);
+        pointer.setTranslateX(scene.widthProperty().doubleValue()  + 1500);
+        pointer.setTranslateY(scene.heightProperty().doubleValue() +   50);
         pointer.setOnMouseClicked(event ->
         {
             turnOrderView.turn();
         });
 
-        pointer = mainMenu.getButton("Init TurnOrderView");
-        pointer.setTranslateX(scene.widthProperty().doubleValue() + 1500);
-        pointer.setTranslateY(scene.heightProperty().doubleValue() + 80);
+        pointer = mainMenu.getButton("Start Combat");
+        pointer.setTranslateX(scene.widthProperty().doubleValue()  + 1500);
+        pointer.setTranslateY(scene.heightProperty().doubleValue() +   80);
         pointer.setOnMouseClicked(event ->
         {
-            turnOrderView.init(3000);
+            new Thread(new Combat(turnOrderView)).start();
         });
 
         pointer = mainMenu.getButton("Items");
@@ -349,7 +289,7 @@ public class Main extends Application
             Auron.action_skill(Tidus, Skill.BLOODLETTER);
         });
 
-        mainMenu.setAutoResizeButtons(true);
+        // mainMenu.setAutoResizeButtons(true);
         root.getChildren().add(mainMenu);
     }
 
@@ -384,7 +324,100 @@ public class Main extends Application
         root.getChildren().add(fps_view);
     }
 
+    private void setupMenuAnimations()
+    {
+        tt_btn_turn.setNode             (mainMenu.getButton("Turn"              )); tt_btn_turn.setToX             (offset);
+        tt_btn_initTurnOrderView.setNode(mainMenu.getButton("Init TurnOrderView")); tt_btn_initTurnOrderView.setToX(offset);
+        tt_btn_items.setNode            (mainMenu.getButton("Items"             )); tt_btn_items.setToX            (offset);
+        tt_btn_abilities.setNode        (mainMenu.getButton("Abilities"         )); tt_btn_abilities.setToX        (offset);
+        tt_btn_equip.setNode            (mainMenu.getButton("Equip"             )); tt_btn_equip.setToX            (offset);
+        tt_btn_status.setNode           (mainMenu.getButton("Status"            )); tt_btn_status.setToX           (offset);
+        tt_btn_options.setNode          (mainMenu.getButton("Options"           )); tt_btn_options.setToX          (offset);
+        tt_btn_console.setNode          (mainMenu.getButton("Console"           )); tt_btn_console.setToX          (offset);
+        tt_btn_exit.setNode             (mainMenu.getButton("Exit"              )); tt_btn_exit.setToX             (offset);
+        tt_btn_attackTidus.setNode      (mainMenu.getButton("Attack Tidus"      )); tt_btn_attackTidus.setToX      (offset);
 
+        st_buttons = new SequentialTransition(tt_btn_turn, tt_btn_initTurnOrderView, tt_btn_items, tt_btn_abilities, tt_btn_equip, tt_btn_status, tt_btn_options, tt_btn_console,
+                                              tt_btn_exit, tt_btn_attackTidus                                                                                                    );
+    }
+
+    public void setupTranslateTransitions()
+    {
+//        tt_gmbResume.setToX(-30);
+//        tt_gmbLvlUp.setToX(-30);
+//        tt_gmbItems.setToX(-30);
+//        tt_gmbAbilities.setToX(-30);
+//        tt_gmbEquip.setToX(-30);
+//        tt_gmbStatus.setToX(-30);
+//        tt_gmbOptions.setToX(-30);
+//        tt_gmbExit.setToX(-30);
+    }
+
+    public void gameMenuExpandCollapse(String action)
+    {
+//        if (action.equals("expand"))
+//        {
+//            tt_gmbResume.setToX(-30);
+//            tt_gmbLvlUp.setToX(-30);
+//            tt_gmbItems.setToX(-30);
+//            tt_gmbAbilities.setToX(-30);
+//            tt_gmbEquip.setToX(-30);
+//            tt_gmbStatus.setToX(-30);
+//            tt_gmbOptions.setToX(-30);
+//            tt_gmbExit.setToX(-30);
+//
+//            /*gameMenu.setVisible(true);
+//            ft_gameMenu.setFromValue(0);
+//            ft_gameMenu.setToValue(1);
+//
+//            ft_textArea.setFromValue(1);
+//            ft_textArea.setToValue(0);
+//            st.setOnFinished(event ->
+//            {
+//                gameMenu.setVisible(true);
+//                ta.setVisible(false);
+//            });
+//
+//            ft_gameMenu.play();
+//            ft_textArea.play();
+//            st.play();*/
+//            lineAnimationExpandCollapse(1, 0.25);
+//            /*helpView.controlTextScrolling(true, 10000);*/
+//
+//            gmbsVisible = true;
+//        }
+//
+//        else if (action.equals("collapse"))
+//        {
+//            tt_gmbResume.setToX(1900);
+//            tt_gmbLvlUp.setToX(1900);
+//            tt_gmbItems.setToX(1900);
+//            tt_gmbAbilities.setToX(1900);
+//            tt_gmbEquip.setToX(1900);
+//            tt_gmbStatus.setToX(1900);
+//            tt_gmbOptions.setToX(1900);
+//            tt_gmbExit.setToX(1900);
+//
+//            /*ft_gameMenu.setFromValue(1);
+//            ft_gameMenu.setToValue(0);
+//
+//            ft_textArea.setFromValue(0);
+//            ft_textArea.setToValue(1);
+//            st.setOnFinished(event ->
+//            {
+//                gameMenu.setVisible(false);
+//                ta.setVisible(true);
+//            });
+//
+//            st.play();
+//            ft_gameMenu.play();
+//            ft_textArea.play();*/
+//            lineAnimationExpandCollapse(0, 0.25);
+//            /*helpView.controlTextScrolling(false, 0);*/
+//
+//            gmbsVisible = false;
+//        }
+    }
 
     // I decided to outsource all the parts of window assemblement to seperate methods. This makes it easy to read the program's flow in the start() method.
     // Sichtbare Elemente werden anscheinend übereinander gepackt. Werden die Buttons zuerst erstellt und danach das Hintergrundbild, so werden die Buttons von dem Bild überdeckt.
@@ -395,13 +428,13 @@ public class Main extends Application
 
         scene = new Scene(root);
 
-
-        setupImages();
-        setupMainMenu();
-        setupSceneKeys();
-        setupFpsView();
-        initWindow();
-        setupConsole();
+        setupImages        ();
+        setupMainMenu      ();
+        // setupMenuAnimations();
+        setupSceneKeys     ();
+        setupFpsView       ();
+        initWindow         ();
+        setupConsole       ();
 
         TTextArea tTextArea = new TTextArea();
         root.getChildren().addAll(turnOrderView, tTextArea);

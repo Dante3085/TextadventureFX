@@ -1,5 +1,9 @@
 package com.ui.gameMenu;
 
+import javafx.animation.ParallelTransition;
+import javafx.animation.SequentialTransition;
+import javafx.animation.Transition;
+import javafx.animation.TranslateTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -7,73 +11,159 @@ import javafx.scene.Parent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.logging.Logger;
 
 /**
- * Describes what a menu is in the game.
+ * Unites GameMenuElements into a Pane layout that makes thing like uniform Animations easier. Also does other administrative tasks.
  * @author mjsch
  */
 public class GameMenu extends VBox // TODO: FlowPane mit Orientation.HORIZONTAL ? Öffent automatisch neue Zeilen.
 {
+    /**
+     * Logger of this class used for logging status, warning and error information to console and / or files.
+     */
     private static final Logger m_log = Logger.getLogger(GameMenu.class.getName());
 
+    /**
+     * Name of the GameMenu.
+     */
     private String m_name;
-    private boolean m_isLimited = false;
-    private int m_maxSize = 0;
-    // private ObservableList<GameMenuElement> m_elements;
-    // private Pane m_layout;
 
     /**
-     * Creates empty GameMenu with passed name. Empty means no elements.
-     * <br>Structure of GameMenu will be decided by passed layout.
-     * @param name Name of GameMenu.
-     // * @param layout Layout in which GameMenu will structure it's elements.
+     * Determines if this GameMenu is limited in the number of it's GameMenuElements.
      */
-    public GameMenu(String name/*, Pane layout*/)
+    private boolean m_isLimited = false;
+
+    /**
+     * If m_isLimited = true , this variable determines how many GameMenuElements the GameMenu can have.
+     */
+    private int m_maxSize = 0;
+
+    /**
+     * Stores TranslateTransitions of GameMenuElements in a way that creates a structural connection between GameMenuElement and it's TranslateTransition.
+     */
+    private HashMap<String, TranslateTransition>  m_translateTransitions = new HashMap<String, TranslateTransition>();
+
+    public enum AnimType
+    {
+        NORMAL,
+        SEQUENTIAL;
+    }
+
+    public class UniformAnimation
+    {
+        // TODO: From and To are 3 dimensional (x, y, z).
+        ArrayList<TranslateTransition> m_translateTransitions;
+        Transition m_type;
+        double m_from;
+        double m_to;
+        double m_duration;
+
+        public UniformAnimation(AnimType type, double from, double to, double duration)
+        {
+            m_from = from;
+            m_to = to;
+            m_duration = duration;
+            m_translateTransitions = new ArrayList<TranslateTransition>();
+
+            if (type == AnimType.NORMAL)
+                m_type = null;
+            else
+        }
+
+        public UniformAnimation(AnimType type, ArrayList<TranslateTransition> translateTransitions, double from, double to, double duration)
+        {
+            m_translateTransitions = translateTransitions;
+            m_from = from;
+            m_to = to;
+            m_duration = duration;
+
+            // TODO: SCHLECHT. Schleife wiederholt sich.
+            if (type == AnimType.SEQUENTIAL)
+            {
+                m_type = new SequentialTransition();
+            }
+        }
+
+        public void addElement(TranslateTransition translateTransition, GameMenuElement element)
+        {
+            Object type = element.getClass();
+            if (type.equals(GameMenuButton.class))
+                translateTransition.setNode((GameMenuButton)element);
+            else if (type.equals(CharacterView.class))
+                translateTransition.setNode((GameMenuButton)element);
+            else
+            {
+                GameMenu.m_log.warning("@addElement(" + translateTransition.toString() + ", " + element.toString() + "): The type of passed element '" + type.toString() + "' is not supported." +
+                        "\n\t    - Aborted further execution of this method.");
+                return;
+            }
+            translateTransition.setFromX(m_from);
+            translateTransition.setToX(m_from);
+            translateTransition.setDuration(new Duration(m_duration));
+        }
+    }
+
+    /**
+     * Creates empty {@code GameMenu} with passed name. Empty means no elements.
+     * @param name Name of GameMenu.
+     */
+    public GameMenu(String name)
     {
         m_name = name;
-        this.setSpacing(5);
-       //  m_elements = FXCollections.observableArrayList();
-        // m_layout = layout;
     }
 
     /**
      * Creates GameMenu with passed name and passed List of Elements.
      * @param name Name of GameMenu.
      * @param elements Initial List of Elements for GameMenu.
-     // * @param layout Layout in which GameMenu will structure it's elements.
      */
-    public GameMenu(String name, List<GameMenuElement> elements/*, Pane layout*/)
+    public GameMenu(String name, List<GameMenuElement> elements)
     {
         m_name = name;
-        // m_elements = FXCollections.observableArrayList(elements);
         for (GameMenuElement g: elements)
             addElementToLayout(g);
     }
 
-    /**
+    public void playUniformAnimation()
+    {
+
+    }
+
+    public void createUniformAnimation()
+    {
+
+    }
+
+/*    *//**
      * Changes the current layout to the passed one
      * <br>If necessary, adjusts elements.
      * @param layout New Layout.
-     */
+     *//*
     public void setLayout(Pane layout)
     {
         // m_layout = layout;
-    }
+    }*/
 
     /**
-     * Adds the passed GameMenuElement to the GameMenu's ObservableList of GameMenuElements.
-     * <br>If this GameMenu 'is limited' and 'maxSize' of GameMenuElements has been reached,
-     * this method will only log that fact to console.
+     * Adds the passed {@code GameMenuElement} to the GameMenu's / Layout's {@code ObservableList} of {@code GameMenuElements}.
+     * <br>After that, a new {@code TranslateTransition} is registered in a {@code HashMap} with the GameMenuElement's {@code id} as key.
+     * <br>If this {@code GameMenu} 'is limited' and 'maxSize' of GameMenuElements has been reached,
+     * this method will only log that fact to the console.
      * @param element Passed GameMenuElement.
      */
     public void addElement(GameMenuElement element)
     {
         if (!isLimited())
+        {
             addElementToLayout(element);
+        }
         else
         {
             if (getChildren().size() >= m_maxSize)
@@ -95,11 +185,17 @@ public class GameMenu extends VBox // TODO: FlowPane mit Orientation.HORIZONTAL 
         // TODO: Das Casting deutet darauf hin, dass die Typhierarchie nicht richtig durchdacht ist.
         Object type = element.getClass();
         if (type.equals(GameMenuButton.class))
-            getChildren().add((GameMenuButton)element);
+        {
+            getChildren().add((GameMenuButton) element);
+            m_translateTransitions.put(element.id(), new TranslateTransition(new Duration(0), (GameMenuButton)element));
+        }
         else if (type.equals(CharacterView.class))
-            getChildren().add((CharacterView)element);
+        {
+            getChildren().add((CharacterView) element);
+            m_translateTransitions.put(element.id(), new TranslateTransition(new Duration(0), (CharacterView)element));
+        }
         else
-            m_log.warning("The type '" + type.toString() + "' is not supported.");
+            m_log.warning("The type of passed element '" + type.toString() + "' is not supported.");
     }
 
     /**

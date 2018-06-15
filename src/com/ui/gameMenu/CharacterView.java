@@ -18,7 +18,7 @@ import javafx.scene.text.Text;
  */
 public class CharacterView extends StackPane implements GameMenuElement
 {
-    private String name;
+    private final String name;
     private String hpValue;
     private String mpValue;
 

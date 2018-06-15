@@ -23,6 +23,7 @@ import java.util.LinkedList;
  */
 public class GameMenuButton extends StackPane implements GameMenuElement
 {
+    private final String name;
     private Text text_name;
     private Rectangle rec_bg;
 
@@ -31,7 +32,8 @@ public class GameMenuButton extends StackPane implements GameMenuElement
 
     public GameMenuButton()
     {
-        text_name = new Text("NO_NAME");
+        name = "NO_NAME";
+        text_name = new Text(this.name);
         this.width = 0;
         this.heigth = 0;
     }
@@ -41,7 +43,9 @@ public class GameMenuButton extends StackPane implements GameMenuElement
         this.width = width;
         this.heigth = height;
 
-        text_name = new Text(name);
+        this.name = name;
+
+        text_name = new Text(this.name);
         text_name.setFont(text_name.getFont().font(20));
         text_name.setFill(Color.WHITE);
         text_name.setTranslateX(20);

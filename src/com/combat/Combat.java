@@ -6,6 +6,7 @@ import com.ui.combat.turnOrderView.TurnOrderView;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -28,7 +29,7 @@ public class Combat implements Runnable
             party1.add(new Character("Party1[" + i + "]", 1000, 100, 20, 5, 9, 3, 2));
             party2.add(new Character("Party2[" + i + "]", 200, 100, 32, 40, 4555, 32, 25));
         }
-        m_log.info("Combat initialisiert.");
+        m_log.log(Level.INFO, "Combat initialisiert");
     }
 
     public Combat(ArrayList<Character> party1, ArrayList<Character> party2)

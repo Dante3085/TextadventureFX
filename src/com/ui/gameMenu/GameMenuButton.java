@@ -1,7 +1,12 @@
 package com.ui.gameMenu;
 
 import com.Main.Main;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.effect.Glow;
@@ -10,17 +15,26 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+import java.util.LinkedList;
+
 /**
  * Button for the UI.
  * @author mjsch
  */
-public class GameMenuButton extends StackPane
+public class GameMenuButton extends StackPane implements GameMenuElement
 {
     private Text text_name;
     private Rectangle rec_bg;
 
     private double width;
     private double heigth;
+
+    public GameMenuButton()
+    {
+        text_name = new Text("NO_NAME");
+        this.width = 0;
+        this.heigth = 0;
+    }
 
     public GameMenuButton(String name, double width, double height)
     {
@@ -89,8 +103,14 @@ public class GameMenuButton extends StackPane
     }
 
     @Override
+    public String id()
+    {
+        return this.text_name.getText();
+    }
+
+    @Override
     public String toString()
     {
-        return this.text_name.getText() + "[" + width + ", " + heigth + "]";
+        return GameMenuButton.class.getName() + "[" + this.text_name.getText() + ", " + width + ", " + heigth + "]";
     }
 }

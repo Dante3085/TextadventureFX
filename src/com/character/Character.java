@@ -36,10 +36,10 @@ public class Character
     private int DMGRANGE; // UNDEFINED
     private int DMGBASE;  // Attacker's strength (or whatever is adequate to that) - Defender's defense (or whatever is adequate to that).
 
-    HashMap<Item, ICallback> items = new HashMap<Item, ICallback>();
-    HashMap<Magic, ICallback> magics = new HashMap<Magic, ICallback>();
-    HashMap<Skill, ICallback> skills = new HashMap<Skill, ICallback>();
-    HashMap<RevengeMove, ICallback> revengeMoves = new HashMap<RevengeMove, ICallback>();
+    private HashMap<Item, ICallback> items = new HashMap<Item, ICallback>();
+    private HashMap<Magic, ICallback> magics = new HashMap<Magic, ICallback>();
+    private HashMap<Skill, ICallback> skills = new HashMap<Skill, ICallback>();
+    private HashMap<RevengeMove, ICallback> revengeMoves = new HashMap<RevengeMove, ICallback>();
 
     /**
      * Default Constructor
@@ -54,6 +54,9 @@ public class Character
         this.wit = 0;
         this.agility = 0;
         this.speed = 0;
+
+        setupSkills();
+        setupRevengeMoves();
     }
 
     /**
@@ -101,6 +104,7 @@ public class Character
      */
     private boolean reachedRevengeThreshold(Character target)
     {
+        System.out.println("REACHED_REVENGE_THRESHOLD\n\tRevengeValue: " + revengeValue);
         if (revengeValue >= 20)
         {
             action_revengeMove(target, RevengeMove.A);

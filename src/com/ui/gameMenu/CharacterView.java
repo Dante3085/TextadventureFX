@@ -13,10 +13,10 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 /**
- * Display for Character Attributes that the Player should know about.
+ * Display for important Character information in GameMenus.
  * @author mjsch
  */
-public class CharacterView extends StackPane
+public class CharacterView extends StackPane implements GameMenuElement
 {
     private String name;
     private String hpValue;
@@ -184,6 +184,12 @@ public class CharacterView extends StackPane
     public Text getText_lvlUpPoints()
     {
         return text_lvlUpPoints;
+    }
+
+    @Override
+    public String id()
+    {
+        return this.name;
     }
 
     @Override

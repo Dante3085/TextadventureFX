@@ -24,10 +24,14 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Main Class of Textadventure.
@@ -42,7 +46,8 @@ public class Main extends Application
 
     private final int offset = 1900;
 
-    GameMenu mainMenu = new GameMenu("MainMenu");
+    // GameMenu mainMenu = new GameMenu("MainMenu");
+    GameMenu menu = new GameMenu("Test");
 
     TextArea ta;
     public static Console console;
@@ -71,9 +76,46 @@ public class Main extends Application
 
     SequentialTransition st_buttons;
 
+    private static final Logger m_log = Logger.getLogger("Logger");
+
     public static void main(String[] args)
     {
         launch(args);
+    }
+
+    // I decided to outsource all the parts of window assemblement to seperate methods. This makes it easy to read the program's flow in the start() method.
+    // Sichtbare Elemente werden anscheinend übereinander gepackt. Werden die Buttons zuerst erstellt und danach das Hintergrundbild, so werden die Buttons von dem Bild überdeckt.
+    @Override
+    public void start(Stage primaryStage) throws Exception
+    {
+        mainWindow = primaryStage;
+
+        scene = new Scene(root);
+
+        setupImages        ();
+        setupMainMenu      ();
+        // setupMenuAnimations();
+        setupSceneKeys     ();
+        setupFpsView       ();
+        initWindow         ();
+        setupConsole       ();
+
+        menu.addElement(new GameMenuButton("Button1", 100, 50));
+        menu.addElement(new GameMenuButton("Button2", 100, 50));
+        menu.addElement(new GameMenuButton("Button3", 100, 50));
+        menu.addElement(new GameMenuButton("Button4", 100, 50));
+        menu.addElement(new GameMenuButton("Button5", 100, 50));
+        menu.addElement(new GameMenuButton("Button6", 100, 50));
+
+        menu.setTranslateX(1000);
+
+        TTextArea tTextArea = new TTextArea();
+        root.getChildren().addAll(turnOrderView, tTextArea, menu);
+
+        CharacterView auron = new CharacterView("Auron", "2000", "167");
+        auron.setTranslateX(200);
+        auron.setTranslateY(200);
+        root.getChildren().add(auron);
     }
 
     public void addLine(double x, double y)
@@ -143,7 +185,7 @@ public class Main extends Application
      */
     private void setupMainMenu()
     {
-        mainMenu.addButton(new GameMenuButton("Turn", 450, 55              ));
+        /*mainMenu.addButton(new GameMenuButton("Turn", 450, 55              ));
         mainMenu.addButton(new GameMenuButton("Start Combat", 450, 55));
         mainMenu.addButton(new GameMenuButton("Items", 450, 55             ));
         mainMenu.addButton(new GameMenuButton("Abilities", 450, 55         ));
@@ -290,7 +332,7 @@ public class Main extends Application
         });
 
         // mainMenu.setAutoResizeButtons(true);
-        root.getChildren().add(mainMenu);
+        root.getChildren().add(mainMenu);*/
     }
 
     private void setupImages()
@@ -326,7 +368,7 @@ public class Main extends Application
 
     private void setupMenuAnimations()
     {
-        tt_btn_turn.setNode             (mainMenu.getButton("Turn"              )); tt_btn_turn.setToX             (offset);
+        /*tt_btn_turn.setNode             (mainMenu.getButton("Turn"              )); tt_btn_turn.setToX             (offset);
         tt_btn_initTurnOrderView.setNode(mainMenu.getButton("Init TurnOrderView")); tt_btn_initTurnOrderView.setToX(offset);
         tt_btn_items.setNode            (mainMenu.getButton("Items"             )); tt_btn_items.setToX            (offset);
         tt_btn_abilities.setNode        (mainMenu.getButton("Abilities"         )); tt_btn_abilities.setToX        (offset);
@@ -338,7 +380,7 @@ public class Main extends Application
         tt_btn_attackTidus.setNode      (mainMenu.getButton("Attack Tidus"      )); tt_btn_attackTidus.setToX      (offset);
 
         st_buttons = new SequentialTransition(tt_btn_turn, tt_btn_initTurnOrderView, tt_btn_items, tt_btn_abilities, tt_btn_equip, tt_btn_status, tt_btn_options, tt_btn_console,
-                                              tt_btn_exit, tt_btn_attackTidus                                                                                                    );
+                                              tt_btn_exit, tt_btn_attackTidus                                                                                                   );*/
     }
 
     public void setupTranslateTransitions()
@@ -417,31 +459,5 @@ public class Main extends Application
 //
 //            gmbsVisible = false;
 //        }
-    }
-
-    // I decided to outsource all the parts of window assemblement to seperate methods. This makes it easy to read the program's flow in the start() method.
-    // Sichtbare Elemente werden anscheinend übereinander gepackt. Werden die Buttons zuerst erstellt und danach das Hintergrundbild, so werden die Buttons von dem Bild überdeckt.
-    @Override
-    public void start(Stage primaryStage) throws Exception
-    {
-        mainWindow = primaryStage;
-
-        scene = new Scene(root);
-
-        setupImages        ();
-        setupMainMenu      ();
-        // setupMenuAnimations();
-        setupSceneKeys     ();
-        setupFpsView       ();
-        initWindow         ();
-        setupConsole       ();
-
-        TTextArea tTextArea = new TTextArea();
-        root.getChildren().addAll(turnOrderView, tTextArea);
-
-        CharacterView auron = new CharacterView("Auron", "2000", "167");
-        auron.setTranslateX(200);
-        auron.setTranslateY(200);
-        root.getChildren().add(auron);
     }
 }

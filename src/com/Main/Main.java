@@ -1,19 +1,12 @@
 package com.Main;
 
 import com.character.Character;
-import com.character.Skill;
-import com.combat.Combat;
 import com.ui.*;
 import com.ui.gameMenu.*;
 import com.ui.combat.turnOrderView.TurnOrderView;
-import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
-import javafx.animation.SequentialTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -22,13 +15,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -44,9 +35,7 @@ public class Main extends Application
 
     private final int offset = 1900;
 
-    // GameMenu mainMenu = new GameMenu("MainMenu");
-    GameMenu menu = new GameMenu("menu1");
-    GameMenu menu2 = new GameMenu("menu2");
+    private GameMenu menu = new GameMenu("test");
 
     TextArea ta;
     public static Console console;
@@ -73,39 +62,31 @@ public class Main extends Application
     public void start(Stage primaryStage) throws Exception
     {
         mainWindow = primaryStage;
-
         scene = new Scene(root);
 
         setupImages        ();
         setupMainMenu      ();
-        // setupMenuAnimations();
         setupSceneKeys     ();
         setupFpsView       ();
         initWindow         ();
         setupConsole       ();
 
-        menu.addElement(new GameMenuButton("Menu1_Button1", 100, 50));
-        menu.addElement(new GameMenuButton("Menu1_Button2", 100, 50));
-        menu.addElement(new GameMenuButton("Menu1_Button3", 100, 50));
-        menu.addElement(new GameMenuButton("Menu1_Button4", 100, 50));
-        menu.addElement(new GameMenuButton("Menu1_Button5", 100, 50));
-        menu.addElement(new GameMenuButton("Menu1_Button6", 100, 50));
-        menu.setTranslateX(500);
-        menu.setTranslateY(200);
+        menu.setIsLimited(false);
+        menu.addElement(new GameMenuButton());
+        menu.addElement(new GameMenuButton());
+        menu.addElement(new GameMenuButton());
+        menu.addElement(new GameMenuButton());
+        menu.addElement(new GameMenuButton());
+        menu.addElement(new GameMenuButton());
+        menu.addElement(new GameMenuButton());
 
-        AnimConfig config = new AnimConfig("Test");
+        menu.dockRight();
+        AnimConfig config = new AnimConfig("config");
+        config.toX = 100;
         config.duration = 500;
-        config.fromX = 1;
-        config.toX = 500;
         menu.customizeUniformAnimation(config);
 
-        ((GameMenuButton)menu.getElement("Menu1_Button1")).setOnMouseClicked(event ->
-        {
-            console.writeToConsole(config.toString());
-            console.writeToConsole(menu.toString());
-        });
-
-        root.getChildren().addAll(turnOrderView, menu);
+        root.getChildren().addAll(menu);
     }
 
     public void addLine(double x, double y)
@@ -146,13 +127,14 @@ public class Main extends Application
             {
                 case ESCAPE:
                 {
-                    menu.playUniformAnimation(AnimType.PARALLEL);
-                    menu2.playUniformAnimation(AnimType.SEQUENTIAL);
+                    menu.forward();
+                    break;
                 }
 
-                case CIRCUMFLEX:
+                case ALT:
                 {
-
+                    menu.backward();
+                    break;
                 }
             }
         });
@@ -193,7 +175,7 @@ public class Main extends Application
 
     private void setupFpsView()
     {
-        FPS_View fps_view = new FPS_View();
+        FPSView fps_view = new FPSView();
         root.getChildren().add(fps_view);
     }
 }

@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
  * Displays fps.
  * @author mjsch
  */
-public class FPS_View extends StackPane {
+public class FPSView extends StackPane {
 
     private final long[] frameTimes = new long[100];
     private int frameTimeIndex = 0 ;
@@ -19,7 +19,7 @@ public class FPS_View extends StackPane {
 
     boolean enableMsg = false;
 
-    public FPS_View()
+    public FPSView()
     {
         label = new Label();
         label.setTextFill(Color.ROYALBLUE);

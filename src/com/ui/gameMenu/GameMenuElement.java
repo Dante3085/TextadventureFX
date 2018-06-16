@@ -1,12 +1,24 @@
 package com.ui.gameMenu;
 
-import javafx.scene.Node;
-
 public interface GameMenuElement
 {
+    public static int id = 0;
+
     /**
-     * Every GameMenuElement needs to be able to return some form of id. This id should be immutable.
-     * @return id.
+     *
+     * @return
      */
     String id();
+
+    /**
+     * Returns height of this GameMenuElement.
+     * @return height
+     */
+    double height();
+
+    /**
+     * Returns width of this GameMenuElement.
+     * @return width
+     */
+    double width();
 }

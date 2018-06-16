@@ -1,6 +1,7 @@
 package com.ui.gameMenu;
 
 import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.effect.Glow;
@@ -38,6 +39,10 @@ public class CharacterView extends StackPane implements GameMenuElement
 
     public CharacterView(String name, String hpValue, String mpValue)
     {
+        setCache(true);
+        setCacheShape(true);
+        setCacheHint(CacheHint.SPEED);
+
         this.name = name;
         this.hpValue = hpValue;
         this.mpValue = mpValue;
@@ -190,6 +195,18 @@ public class CharacterView extends StackPane implements GameMenuElement
     public String id()
     {
         return this.name;
+    }
+
+    @Override
+    public double height()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public double width()
+    {
+        throw new UnsupportedOperationException();
     }
 
     @Override

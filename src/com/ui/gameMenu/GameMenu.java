@@ -2,25 +2,18 @@ package com.ui.gameMenu;
 
 import com.Main.Main;
 import javafx.animation.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.logging.Logger;
 
 /**
- * Unites GameMenuElements into a Pane layout that makes thing like uniform Animations easier. Also does other administrative tasks.
+ * Unites Nodes into a Pane layout that makes thing like uniform Animations easier. Also does other administrative tasks.
  * @author mjsch
  */
 public class GameMenu extends VBox // TODO: FlowPane mit Orientation.HORIZONTAL ? Öffent automatisch neue Zeilen.
@@ -36,29 +29,44 @@ public class GameMenu extends VBox // TODO: FlowPane mit Orientation.HORIZONTAL 
     private String m_name;
 
     /**
-     * Determines if this GameMenu is limited in the number of it's GameMenuElements.
+     * Determines if this GameMenu is limited in the number of it's Nodes.
      */
     private boolean m_isLimited = false;
 
     /**
-     * If m_isLimited = true , this variable determines how many GameMenuElements the GameMenu can have.
+     * If m_isLimited = true , this variable determines how many Nodes the GameMenu can have.
      */
     private int m_maxSize = 0;
 
     /**
-     * Stores TranslateTransitions for GameMenuElement Animation.
+     * Stores TranslateTransitions for forward uniformAnimation.
      */
-    private ArrayList<TranslateTransition> m_translateTransitions = new ArrayList<TranslateTransition>();
+    private ArrayList<TranslateTransition> m_ttForward = new ArrayList<TranslateTransition>();
 
     /**
-     * ParallelTransition for {@code uniformTransition}.
+     * Stores TranslateTransitions for backwards uniformAnimation.
      */
-    private ParallelTransition m_parallelTransition = new ParallelTransition();
+    private ArrayList<TranslateTransition> m_ttBackwards = new ArrayList<TranslateTransition>();
 
     /**
-     * SequentialTransition for {@code uniformTransition}.
+     * ParallelTransition for forward {@code uniformAnimation}.
      */
-    private SequentialTransition m_sequentialTransition = new SequentialTransition();
+    private ParallelTransition m_ptForward = new ParallelTransition();
+
+    /**
+     * ParallelTransition for backwards {@code uniformAnimation}.
+     */
+    private ParallelTransition m_ptBackwards = new ParallelTransition();
+
+    /**
+     * Current AnimConfig.
+     */
+    private AnimConfig m_current;
+
+    /**
+     * Determines whether this GameMenu is collapsed or expanded.
+     */
+    private boolean m_isCollapsed = true;
 
     /**
      * Creates empty {@code GameMenu} with passed name. Empty means no elements.
@@ -66,6 +74,10 @@ public class GameMenu extends VBox // TODO: FlowPane mit Orientation.HORIZONTAL 
      */
     public GameMenu(String name)
     {
+        setCache(true);
+        setCacheShape(true);
+        setCacheHint(CacheHint.SPEED);
+
         m_name = name;
     }
 
@@ -74,12 +86,15 @@ public class GameMenu extends VBox // TODO: FlowPane mit Orientation.HORIZONTAL 
      * @param name Name of GameMenu.
      * @param elements Initial List of Elements for GameMenu.
      */
-    public GameMenu(String name, List<GameMenuElement> elements)
+    public GameMenu(String name, List<Node> elements)
     {
+        setCache(true);
+        setCacheShape(true);
+        setCacheHint(CacheHint.SPEED);
+
         m_name = name;
-        for (GameMenuElement g: elements)
-            if (g instanceof Node)
-                getChildren().add((Node) g);
+        for (Node g: elements)
+                getChildren().add(g);
     }
 
     public void dockTop()
@@ -89,45 +104,54 @@ public class GameMenu extends VBox // TODO: FlowPane mit Orientation.HORIZONTAL 
 
     public void dockRight()
     {
-
+        double biggestWidth = Double.MIN_VALUE;
+        for (Node n : getChildren())
+        {
+            if (n instanceof GameMenuButton)
+            {
+                if (((GameMenuButton) n).width() > biggestWidth)
+                    biggestWidth = ((GameMenuButton) n).width();
+            }
+            else
+                throw new UnsupportedOperationException();
+        }
+        this.setTranslateX(Main.mainWindow.getWidth() - biggestWidth);
     }
 
     public void dockBottom()
     {
-        /*double height = 0;
-        for (Node g : getChildren())
+        double height = 0;
+        for (Node n : getChildren())
         {
-            if (g instanceof GameMenuButton)
-                height += ((GameMenuButton) g).width();
+            if (n instanceof GameMenuButton)
+                height += ((GameMenuButton) n).height();
+            else
+                throw new UnsupportedOperationException();
         }
-        this.setTranslateY(Main.mainWindow.getHeight() - 200);*/
+        this.setTranslateY(Main.mainWindow.getHeight() - height);
     }
 
     public void dockLeft()
     {
-
+        this.setTranslateX(0);
     }
 
     /**
-     * // TODO: JAVADOC
-     * @param type
+     * Expand GameMenu when it's collapsed.
      */
-    public void playUniformAnimation(AnimType type)
+    public void forward()
     {
-        switch (type)
-        {
-            case SEQUENTIAL:
-            {
-                m_sequentialTransition.play();
-                break;
-            }
+        m_ptForward.play();
+        m_isCollapsed = true;
+    }
 
-            case PARALLEL:
-            {
-                m_parallelTransition.play();
-                break;
-            }
-        }
+    /**
+     * Backwards uniformAnimation.
+     */
+    public void backward()
+    {
+        m_ptBackwards.play();
+        m_isCollapsed = false;
     }
 
     /**
@@ -136,33 +160,51 @@ public class GameMenu extends VBox // TODO: FlowPane mit Orientation.HORIZONTAL 
      */
     public void customizeUniformAnimation(AnimConfig config)
     {
+        m_current = config;
         // TODO: Sind die TranslateTransitions in der SequentialTransition gleich zu denen in der ParallelTransition ?
-        if (m_sequentialTransition.getChildren().isEmpty())
+        if (m_ptForward.getChildren().isEmpty())
+            m_log.warning("@customizeUniformAnimation(" + config.toString() +"): There are no Animations.");
+
+        for (Animation a : m_ptForward.getChildren())
         {
-            m_log.warning("@customizeUniformAnimation(");
+            TranslateTransition forward = (TranslateTransition) a;
+            forward.setDuration(Duration.millis(config.duration));
+
+            forward.setFromX(config.fromX);
+            forward.setToX(config.toX);
+
+            forward.setFromY(config.fromY);
+            forward.setToY(config.toY);
+
+            forward.setFromZ(config.fromZ);
+            forward.setToZ(config.toZ);
         }
 
-        for (Animation a : m_sequentialTransition.getChildren())
+        for (Animation a : m_ptBackwards.getChildren())
         {
-            TranslateTransition t = (TranslateTransition) a;
-            t.setDuration(new Duration(config.duration));
-            t.setFromX(config.fromX);
-            t.setToX(config.toX);
-            t.setFromY(config.fromY);
-            t.setToY(config.toY);
-            t.setFromZ(config.fromZ);
-            t.setToZ(config.toZ);
+            TranslateTransition backward = (TranslateTransition) a;
+            backward.setDuration(Duration.millis(config.duration));
+
+            // For backwards Animation 'to' and 'from' are reversed.
+            backward.setFromX(config.toX);
+            backward.setToX(config.fromX);
+
+            backward.setFromY(config.toY);
+            backward.setToY(config.fromY);
+
+            backward.setFromZ(config.toZ);
+            backward.setToZ(config.fromZ);
         }
     }
 
     /**
-     * Adds the passed {@code GameMenuElement} to the GameMenu's / Layout's {@code ObservableList} of {@code GameMenuElements}.
+     * Adds the passed {@code Node} to the GameMenu's / Layout's {@code ObservableList} of {@code Nodes}.
      * Also creates TranslateTransition with element as Node and adds that TranslateTransition to this GameMenu's SequentialTransition and ParallelTransition.
-     * <br>If this {@code GameMenu} 'is limited' and 'maxSize' of GameMenuElements has been reached,
+     * <br>If this {@code GameMenu} 'is limited' and 'maxSize' of Nodes has been reached,
      * this method will only log that fact to the console.
-     * @param element Passed GameMenuElement.
+     * @param element Passed Nodes.
      */
-    public void addElement(GameMenuElement element)
+    public void addElement(Node element)
     {
         if (!isLimited())
                 addElementToLayout(element, this);
@@ -185,35 +227,27 @@ public class GameMenu extends VBox // TODO: FlowPane mit Orientation.HORIZONTAL 
      * @param element Element to add to layout.
      * @param layout Layout to add element to.
      */
-    private void addElementToLayout(GameMenuElement element, Pane layout)
+    private void addElementToLayout(Node element, Pane layout)
     {
-        if (element instanceof Node)
+        if (element == null)
         {
-            layout.getChildren().add((Node) element);
-            TranslateTransition t = new TranslateTransition(new Duration(1000), (Node) element);
-            t.setFromX(((Node) element).getTranslateX());
-            t.setToX(((Node) element).getTranslateX() + 300);
-            m_parallelTransition.getChildren().add(t);
-            m_sequentialTransition.getChildren().add(t);
-        }
-    }
-
-    /**
-     * // TODO: JAVADOC
-     * // TODO: Get methods might be obsolete, since getChildren() is available.
-     * @param index
-     * @return
-     */
-    public GameMenuElement getElement(int index)
-    {
-        if (index < 0 || index > getChildren().size() - 1)
-        {
-            m_log.warning("@getElement(" + index + "): The passed index is invalid." +
-                    "\n\t     - Aborted further execution of this method.");
-            return null;
+            m_log.severe("@addElementToLayout(" + element.toString() + ", " + layout.toString() + "): Passed element was null. Abort further execution.");
+            return;
         }
 
-        return (GameMenuElement) getChildren().get(index);
+        // Add element to GameMenu VBox.
+        layout.getChildren().add(element);
+
+        // Register new forward and backward TranslateTransition for new element.
+        TranslateTransition forward = new TranslateTransition(new Duration(1000), element);
+        forward.setFromX(element.getTranslateX());
+        forward.setToX(element.getTranslateX() + 300);
+        m_ptForward.getChildren().add(forward);
+
+        TranslateTransition backward = new TranslateTransition(new Duration(1000), element);
+        backward.setFromX(element.getTranslateX() + 300);
+        backward.setToX(element.getTranslateX());
+        m_ptBackwards.getChildren().add(backward);
     }
 
     /**
@@ -221,14 +255,21 @@ public class GameMenu extends VBox // TODO: FlowPane mit Orientation.HORIZONTAL 
      * @param id Identifier for GameMenuElement to return.
      * @return GameMenuElement to find and return.
      */
-    public GameMenuElement getElement(final String id)
+/*    public Node getElement(final String id)
     {
-        for (Node g : getChildren())
-            if (((GameMenuElement)g).id().equals(id))
-                return (GameMenuElement) g;
-        m_log.warning("@getElement(" + id + "): GameMenu '" + m_name + "' does not contain an element with passed id.");
+        for (Node n : getChildren())
+        {
+            if (n instanceof GameMenuElement)
+            {
+                if (((GameMenuElement) n).hash().equals(id))
+                    return n;
+            }
+            else
+                m_log.info("@getElement(" + id + "): Node '" + n.toString() + " is not a GameMenuElement.");
+        }
+        m_log.warning("@getElement(" + id + "): GameMenu '" + m_name + "' does not contain a Node with passed id.");
         return null;
-    }
+    }*/
 
     /**
      * Checks if number of elements in this GameMenu is limited.

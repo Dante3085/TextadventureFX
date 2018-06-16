@@ -4,6 +4,7 @@ import com.Main.Main;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -13,6 +14,7 @@ import javafx.scene.effect.Glow;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.util.LinkedList;
@@ -23,25 +25,75 @@ import java.util.LinkedList;
  */
 public class GameMenuButton extends StackPane implements GameMenuElement
 {
-    private final String name;
-    private Text text_name;
-    private Rectangle rec_bg;
-
-    private double width;
-    private double heigth;
+    private Text m_text = new Text();
+    private Rectangle m_rec = new Rectangle();
 
     public GameMenuButton()
     {
-        name = "NO_NAME";
-        text_name = new Text(this.name);
-        this.width = 0;
-        this.heigth = 0;
+        // Improve Performance TODO: Might not do anything.
+        this.setCache(true);
+        this.setCacheShape(true);
+        this.setCacheHint(CacheHint.SPEED);
+
+        // Init text
+        m_text.setText("NO_TEXT");
+        m_text.setFont(new Font(20));
+        m_text.setFill(Color.WHITE);
+        double textWidth = m_text.getLayoutBounds().getWidth();
+
+        // Init StackPane
+        this.setWidth(textWidth);
+        this.setMaxWidth(textWidth);
+        this.setMinWidth(textWidth);
+
+        // Init Rectangle
+        m_rec.setWidth(this.getWidth() + 30);
+        m_rec.setHeight(50);
+        m_rec.setOpacity(0.6);
+        m_rec.setFill(Color.BLACK);
+        m_rec.setEffect(new GaussianBlur(3.5));
+
+        // Set Text alignment in StackPane. Applies for all StackPanes that this Node is / will be in.
+        StackPane.setAlignment(m_text, Pos.CENTER_LEFT);
+
+        // Init Mouse-Interaction with GameMenuButton
+        this.setOnMouseEntered(event ->
+        {
+            m_rec.setTranslateX(20);
+            m_rec.setFill(Color.WHITE);
+
+            m_text.setTranslateX(30);
+            m_text.setFill(Color.BLACK);
+        });
+
+        this.setOnMouseExited(event ->
+        {
+            m_rec.setTranslateX(0);
+            m_rec.setFill(Color.BLACK);
+
+            m_text.setTranslateX(0);
+            m_text.setFill(Color.WHITE);
+        });
+
+        DropShadow drop = new DropShadow(50, Color.BLUE);
+        drop.setInput(new Glow());
+
+        setOnMousePressed(event -> setEffect(drop));
+        setOnMouseReleased(event -> setEffect(null));
+
+        // Init StackPane with text and rec as children
+        getChildren().addAll(m_rec, m_text);
     }
 
     public GameMenuButton(String name, double width, double height)
     {
-        this.width = width;
-        this.heigth = height;
+        /*setCache(true);
+        setCacheShape(true);
+        setCacheHint(CacheHint.SPEED);
+
+        this.setWidth(width);
+        this.setMaxWidth(width);
+        this.setHeight(height);
 
         this.name = name;
 
@@ -50,7 +102,7 @@ public class GameMenuButton extends StackPane implements GameMenuElement
         text_name.setFill(Color.WHITE);
         text_name.setTranslateX(20);
 
-        rec_bg = new Rectangle(width, height);
+        rec_bg = new Rectangle(this.getWidth(), this.getHeight());
         rec_bg.setOpacity(0.6);
         rec_bg.setFill(Color.BLACK);
         rec_bg.setEffect(new GaussianBlur(3.5));
@@ -78,7 +130,7 @@ public class GameMenuButton extends StackPane implements GameMenuElement
         });
 
         setOnMousePressed(event -> setEffect(drop));
-        setOnMouseReleased(event -> setEffect(null));
+        setOnMouseReleased(event -> setEffect(null));*/
     }
 
     public void setAutoResize(boolean on)
@@ -92,7 +144,7 @@ public class GameMenuButton extends StackPane implements GameMenuElement
         }
     }
 
-    public void setText_name(Text text_name)
+/*    public void setText_name(Text text_name)
     {
         this.text_name = text_name;
     }
@@ -117,16 +169,6 @@ public class GameMenuButton extends StackPane implements GameMenuElement
         return rec_bg;
     }
 
-    public double width()
-    {
-        return width;
-    }
-
-    public double getHeigth()
-    {
-        return heigth;
-    }
-
     @Override
     public String id()
     {
@@ -134,8 +176,38 @@ public class GameMenuButton extends StackPane implements GameMenuElement
     }
 
     @Override
+    public double height()
+    {
+        return rec_bg.getHeight();
+    }
+
+    @Override
+    public double width()
+    {
+        return rec_bg.getWidth();
+    }
+
+    @Override
     public String toString()
     {
-        return GameMenuButton.class.getName() + "[" + this.text_name.getText() + ", " + width + ", " + heigth + "]";
+        return GameMenuButton.class.getName() + "[" + this.text_name.getText() + ", " + getWidth() + ", " + getHeight() + "]";
+    }*/
+
+    @Override
+    public String id()
+    {
+        return this.m_text.getText();
+    }
+
+    @Override
+    public double height()
+    {
+        return this.getHeight();
+    }
+
+    @Override
+    public double width()
+    {
+        return this.getWidth();
     }
 }

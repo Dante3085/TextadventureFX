@@ -96,6 +96,7 @@ public class GameMenuButton extends StackPane implements GameMenuElement
     {
         this.text_name = text_name;
     }
+
     public void setBackground(Color c)
     {
         rec_bg.setFill(c);
@@ -104,6 +105,26 @@ public class GameMenuButton extends StackPane implements GameMenuElement
     public String getName()
     {
         return this.text_name.getText();
+    }
+
+    public Text getText_name()
+    {
+        return text_name;
+    }
+
+    public Rectangle getRec_bg()
+    {
+        return rec_bg;
+    }
+
+    public double width()
+    {
+        return width;
+    }
+
+    public double getHeigth()
+    {
+        return heigth;
     }
 
     @Override

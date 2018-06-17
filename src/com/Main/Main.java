@@ -6,6 +6,8 @@ import com.ui.gameMenu.*;
 import com.ui.combat.turnOrderView.TurnOrderView;
 import javafx.animation.ScaleTransition;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.effect.DropShadow;
@@ -35,7 +37,8 @@ public class Main extends Application
 
     private final int offset = 1900;
 
-    private GameMenu menu = new GameMenu("test");
+    private GameMenu mainMenu = new GameMenu("mainMenu");
+    private GameMenu optionsMenu = new GameMenu("optionsMenu");
 
     TextArea ta;
     public static Console console;
@@ -65,28 +68,70 @@ public class Main extends Application
         scene = new Scene(root);
 
         setupImages        ();
-        setupMainMenu      ();
         setupSceneKeys     ();
         setupFpsView       ();
         initWindow         ();
         setupConsole       ();
+        setupMainMenu      ();
 
-        menu.setIsLimited(false);
-        menu.addElement(new GameMenuButton());
-        menu.addElement(new GameMenuButton());
-        menu.addElement(new GameMenuButton());
-        menu.addElement(new GameMenuButton());
-        menu.addElement(new GameMenuButton());
-        menu.addElement(new GameMenuButton());
-        menu.addElement(new GameMenuButton());
+        root.getChildren().addAll(mainMenu, optionsMenu);
+    }
 
-        menu.dockRight();
+    /**
+     * Assembles Textadventure's main mainMenu with all the buttons and their functionality. Menus are represented by instances of the 'GameMenu' class.
+     */
+    private void setupMainMenu()
+    {
         AnimConfig config = new AnimConfig("config");
-        config.toX = 100;
-        config.duration = 500;
-        menu.customizeUniformAnimation(config);
+        config.toX = 250;
+        config.duration = 250;
 
-        root.getChildren().addAll(menu);
+        ObservableList<Node> children;
+
+        optionsMenu.setIsLimited(false);
+        optionsMenu.addElement(new GameMenuButton("BACK", 200, 50   ));
+        optionsMenu.addElement(new GameMenuButton("Option1", 200, 50));
+        optionsMenu.addElement(new GameMenuButton("Option2", 200, 50));
+
+        children = optionsMenu.getChildren();
+
+        children.get(0).setOnMouseClicked(event ->
+        {
+            optionsMenu.forward();
+            mainMenu.backward();
+        });
+
+        optionsMenu.dockRight();
+        optionsMenu.customizeUniformAnimation(config);
+        optionsMenu.setSpacing(20);
+        optionsMenu.forward();
+
+        mainMenu.setIsLimited(false);
+        mainMenu.addElement(new GameMenuButton("Resume", 200, 50   ));
+        mainMenu.addElement(new GameMenuButton("Level Up", 200, 50 ));
+        mainMenu.addElement(new GameMenuButton("Items", 200, 50    ));
+        mainMenu.addElement(new GameMenuButton("Abilities", 200, 50));
+        mainMenu.addElement(new GameMenuButton("Equip", 200, 50    ));
+        mainMenu.addElement(new GameMenuButton("Status", 200, 50   ));
+        mainMenu.addElement(new GameMenuButton("Options", 200, 50  ));
+        mainMenu.addElement(new GameMenuButton("Exit", 200, 50     ));
+
+        children = mainMenu.getChildren();
+
+        children.get(6).setOnMouseClicked(event ->
+        {
+            mainMenu.forward();
+            optionsMenu.backward();
+        });
+
+        children.get(7).setOnMouseClicked(event ->
+        {
+            System.exit(1);
+        });
+
+        mainMenu.dockRight();
+        mainMenu.customizeUniformAnimation(config);
+        mainMenu.setSpacing(20);
     }
 
     public void addLine(double x, double y)
@@ -127,25 +172,17 @@ public class Main extends Application
             {
                 case ESCAPE:
                 {
-                    menu.forward();
+                    mainMenu.forward();
                     break;
                 }
 
                 case ALT:
                 {
-                    menu.backward();
+                    mainMenu.backward();
                     break;
                 }
             }
         });
-    }
-
-    /**
-     * Assembles Textadventure's main menu with all the buttons and their functionality. Menus are represented by instances of the 'GameMenu' class.
-     */
-    private void setupMainMenu()
-    {
-
     }
 
     private void setupImages()

@@ -39,6 +39,7 @@ public class GameMenuButton extends StackPane implements GameMenuElement
         m_text.setText("NO_TEXT");
         m_text.setFont(new Font(20));
         m_text.setFill(Color.WHITE);
+        m_text.setTranslateX(10);
         double textWidth = m_text.getLayoutBounds().getWidth();
 
         // Init StackPane
@@ -47,7 +48,7 @@ public class GameMenuButton extends StackPane implements GameMenuElement
         this.setMinWidth(textWidth);
 
         // Init Rectangle
-        m_rec.setWidth(this.getWidth() + 30);
+        m_rec.setWidth(this.getWidth() + 100);
         m_rec.setHeight(50);
         m_rec.setOpacity(0.6);
         m_rec.setFill(Color.BLACK);
@@ -59,10 +60,10 @@ public class GameMenuButton extends StackPane implements GameMenuElement
         // Init Mouse-Interaction with GameMenuButton
         this.setOnMouseEntered(event ->
         {
-            m_rec.setTranslateX(20);
+            m_rec.setTranslateX(10);
             m_rec.setFill(Color.WHITE);
 
-            m_text.setTranslateX(30);
+            m_text.setTranslateX(10);
             m_text.setFill(Color.BLACK);
         });
 
@@ -71,7 +72,7 @@ public class GameMenuButton extends StackPane implements GameMenuElement
             m_rec.setTranslateX(0);
             m_rec.setFill(Color.BLACK);
 
-            m_text.setTranslateX(0);
+            m_text.setTranslateX(10);
             m_text.setFill(Color.WHITE);
         });
 
@@ -85,52 +86,74 @@ public class GameMenuButton extends StackPane implements GameMenuElement
         getChildren().addAll(m_rec, m_text);
     }
 
-    public GameMenuButton(String name, double width, double height)
+    public GameMenuButton(String text, double width, double height)
     {
-        /*setCache(true);
-        setCacheShape(true);
-        setCacheHint(CacheHint.SPEED);
+        // Improve Performance TODO: Might not do anything.
+        this.setCache(true);
+        this.setCacheShape(true);
+        this.setCacheHint(CacheHint.SPEED);
 
-        this.setWidth(width);
-        this.setMaxWidth(width);
+        // Init text
+        m_text.setText(text);
+        m_text.setFont(new Font(20));
+        m_text.setFill(Color.WHITE);
+        //m_text.setTranslateX(10);
+        double textWidth = m_text.getLayoutBounds().getWidth();
+
+        // Init StackPane
         this.setHeight(height);
+        this.setMinHeight(height);
+        this.setMaxHeight(height);
+        if (width < textWidth)
+        {
+            this.setWidth(textWidth);
+            this.setMaxWidth(textWidth);
+            this.setMinWidth(textWidth);
+        }
+        else
+        {
+            this.setWidth(width);
+            this.setMaxWidth(width);
+            this.setMinWidth(width);
+        }
 
-        this.name = name;
+        // Init Rectangle
+        m_rec.setWidth(this.getWidth() + 50);
+        m_rec.setHeight(this.getHeight());
+        m_rec.setOpacity(0.6);
+        m_rec.setFill(Color.BLACK);
+        m_rec.setEffect(new GaussianBlur(3.5));
 
-        text_name = new Text(this.name);
-        text_name.setFont(text_name.getFont().font(20));
-        text_name.setFill(Color.WHITE);
-        text_name.setTranslateX(20);
+        // Set Text alignment in StackPane. Applies for all StackPanes that this Node is / will be in.
+        StackPane.setAlignment(m_text, Pos.CENTER_LEFT);
 
-        rec_bg = new Rectangle(this.getWidth(), this.getHeight());
-        rec_bg.setOpacity(0.6);
-        rec_bg.setFill(Color.BLACK);
-        rec_bg.setEffect(new GaussianBlur(3.5));
+        // Init Mouse-Interaction with GameMenuButton
+        this.setOnMouseEntered(event ->
+        {
+            m_rec.setTranslateX(10);
+            m_rec.setFill(Color.WHITE);
 
-        setAlignment(Pos.CENTER_LEFT);
-        getChildren().addAll(rec_bg, text_name);
+            m_text.setTranslateX(10);
+            m_text.setFill(Color.BLACK);
+        });
+
+        this.setOnMouseExited(event ->
+        {
+            m_rec.setTranslateX(0);
+            m_rec.setFill(Color.BLACK);
+
+            m_text.setTranslateX(10);
+            m_text.setFill(Color.WHITE);
+        });
 
         DropShadow drop = new DropShadow(50, Color.BLUE);
         drop.setInput(new Glow());
 
-        setOnMouseEntered(event ->
-        {
-            rec_bg.setTranslateX(10);
-            text_name.setTranslateX(30);
-            rec_bg.setFill(Color.WHITE);
-            text_name.setFill(Color.BLACK);
-        });
-
-        setOnMouseExited(event ->
-        {
-            rec_bg.setTranslateX(0);
-            text_name.setTranslateX(20);
-            rec_bg.setFill(Color.BLACK);
-            text_name.setFill(Color.WHITE);
-        });
-
         setOnMousePressed(event -> setEffect(drop));
-        setOnMouseReleased(event -> setEffect(null));*/
+        setOnMouseReleased(event -> setEffect(null));
+
+        // Init StackPane with text and rec as children
+        getChildren().addAll(m_rec, m_text);
     }
 
     public void setAutoResize(boolean on)

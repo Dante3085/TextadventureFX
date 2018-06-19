@@ -9,6 +9,7 @@ import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -16,7 +17,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
@@ -37,8 +38,8 @@ public class Main extends Application
 
     private final int offset = 1900;
 
-    private GameMenu mainMenu = new GameMenu("mainMenu");
-    private GameMenu optionsMenu = new GameMenu("optionsMenu");
+    private GameMenu mainMenu = new GameMenu(new AnchorPane(), "mainMenu");
+    private GameMenu optionsMenu = new GameMenu(new TilePane(),"optionsMenu");
 
     TextArea ta;
     public static Console console;
@@ -74,7 +75,7 @@ public class Main extends Application
         setupConsole       ();
         setupMainMenu      ();
 
-        root.getChildren().addAll(mainMenu, optionsMenu);
+        root.getChildren().addAll(mainMenu.layout(), optionsMenu.layout());
     }
 
     /**
@@ -88,12 +89,12 @@ public class Main extends Application
 
         ObservableList<Node> children;
 
-        optionsMenu.setIsLimited(false);
+        /*optionsMenu.setIsLimited(false);
         optionsMenu.addElement(new GameMenuButton("BACK", 200, 50   ));
         optionsMenu.addElement(new GameMenuButton("Option1", 200, 50));
         optionsMenu.addElement(new GameMenuButton("Option2", 200, 50));
 
-        children = optionsMenu.getChildren();
+        children = optionsMenu.layout().getChildren();
 
         children.get(0).setOnMouseClicked(event ->
         {
@@ -101,10 +102,9 @@ public class Main extends Application
             mainMenu.backward();
         });
 
-        optionsMenu.dockRight();
+        //optionsMenu.dockRight();
         optionsMenu.customizeUniformAnimation(config);
-        optionsMenu.setSpacing(20);
-        optionsMenu.forward();
+        optionsMenu.forward();*/
 
         mainMenu.setIsLimited(false);
         mainMenu.addElement(new GameMenuButton("Resume", 200, 50   ));
@@ -116,7 +116,9 @@ public class Main extends Application
         mainMenu.addElement(new GameMenuButton("Options", 200, 50  ));
         mainMenu.addElement(new GameMenuButton("Exit", 200, 50     ));
 
-        children = mainMenu.getChildren();
+        mainMenu.layout().setTranslateX(500);
+
+        children = mainMenu.layout().getChildren();
 
         children.get(6).setOnMouseClicked(event ->
         {
@@ -129,9 +131,8 @@ public class Main extends Application
             System.exit(1);
         });
 
-        mainMenu.dockRight();
+        //mainMenu.dockRight();
         mainMenu.customizeUniformAnimation(config);
-        mainMenu.setSpacing(20);
     }
 
     public void addLine(double x, double y)

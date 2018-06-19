@@ -16,8 +16,10 @@ import java.util.logging.Logger;
  * Unites Nodes into a Pane layout that makes thing like uniform Animations easier. Also does other administrative tasks.
  * @author mjsch
  */
-public class GameMenu extends VBox // TODO: FlowPane mit Orientation.HORIZONTAL ? Öffent automatisch neue Zeilen.
+public class GameMenu
 {
+    Pane m_layout;
+
     /**
      * Logger of this class used for logging status, warning and error information to console and / or files.
      */
@@ -72,11 +74,13 @@ public class GameMenu extends VBox // TODO: FlowPane mit Orientation.HORIZONTAL 
      * Creates empty {@code GameMenu} with passed name. Empty means no elements.
      * @param name Name of GameMenu.
      */
-    public GameMenu(String name)
+    public GameMenu(Pane layout, String name)
     {
-        setCache(true);
-        setCacheShape(true);
-        setCacheHint(CacheHint.SPEED);
+        m_layout = layout;
+
+        m_layout.setCache(true);
+        m_layout.setCacheShape(true);
+        m_layout.setCacheHint(CacheHint.SPEED);
 
         m_name = name;
     }
@@ -86,26 +90,28 @@ public class GameMenu extends VBox // TODO: FlowPane mit Orientation.HORIZONTAL 
      * @param name Name of GameMenu.
      * @param elements Initial List of Elements for GameMenu.
      */
-    public GameMenu(String name, List<Node> elements)
+    public GameMenu(Pane layout, String name, List<Node> elements)
     {
-        setCache(true);
-        setCacheShape(true);
-        setCacheHint(CacheHint.SPEED);
+        m_layout = layout;
+
+        m_layout.setCache(true);
+        m_layout.setCacheShape(true);
+        m_layout.setCacheHint(CacheHint.SPEED);
 
         m_name = name;
         for (Node g: elements)
-                getChildren().add(g);
+                m_layout.getChildren().add(g);
     }
 
     public void dockTop()
     {
-        this.setTranslateY(0);
+        m_layout.setTranslateY(0);
     }
 
     public void dockRight()
     {
         double biggestWidth = Double.MIN_VALUE;
-        for (Node n : getChildren())
+        for (Node n : m_layout.getChildren())
         {
             if (n instanceof GameMenuButton)
             {
@@ -115,25 +121,25 @@ public class GameMenu extends VBox // TODO: FlowPane mit Orientation.HORIZONTAL 
             else
                 throw new UnsupportedOperationException();
         }
-        this.setTranslateX(Main.mainWindow.getWidth() - biggestWidth);
+        m_layout.setTranslateX(Main.mainWindow.getWidth() - biggestWidth);
     }
 
     public void dockBottom()
     {
         double height = 0;
-        for (Node n : getChildren())
+        for (Node n : m_layout.getChildren())
         {
             if (n instanceof GameMenuButton)
                 height += ((GameMenuButton) n).height();
             else
                 throw new UnsupportedOperationException();
         }
-        this.setTranslateY(Main.mainWindow.getHeight() - height);
+        m_layout.setTranslateY(Main.mainWindow.getHeight() - height);
     }
 
     public void dockLeft()
     {
-        this.setTranslateX(0);
+        m_layout.setTranslateX(0);
     }
 
     /**
@@ -207,16 +213,16 @@ public class GameMenu extends VBox // TODO: FlowPane mit Orientation.HORIZONTAL 
     public void addElement(Node element)
     {
         if (!isLimited())
-                addElementToLayout(element, this);
+                addElementToLayout(element, m_layout);
         else
         {
-            if (getChildren().size() >= m_maxSize)
+            if (m_layout.getChildren().size() >= m_maxSize)
             {
                 m_log.warning("@addElement(" + element.toString() + "): The GameMenu '" + m_name + "' has reached it's limit of '" + m_maxSize + "' elements." +
                         "\n\t     - Aborted further execution of this method.");
             }
             else
-                addElementToLayout(element, this);
+                addElementToLayout(element, m_layout);
         }
     }
 
@@ -309,6 +315,15 @@ public class GameMenu extends VBox // TODO: FlowPane mit Orientation.HORIZONTAL 
     }
 
     /**
+     * Returns layout of this GameMenu.
+     * @return layout
+     */
+    public Pane layout()
+    {
+        return m_layout;
+    }
+
+    /**
      * Returns a String with all there is to know about the GameMenu. // TODO: JAVADOC
      * @return String with information.
      */
@@ -321,13 +336,13 @@ public class GameMenu extends VBox // TODO: FlowPane mit Orientation.HORIZONTAL 
         builder.append(m_name);
         builder.append("[");
 
-        for (int i = 0; i < getChildren().size(); i++)
+        for (int i = 0; i < m_layout.getChildren().size(); i++)
         {
-            if (i == getChildren().size() - 1)
-                builder.append(((GameMenuElement)getChildren().get(i)).id());
+            if (i == m_layout.getChildren().size() - 1)
+                builder.append(((GameMenuElement)m_layout.getChildren().get(i)).id());
             else
             {
-                builder.append(((GameMenuElement)getChildren().get(i)).id());
+                builder.append(((GameMenuElement)m_layout.getChildren().get(i)).id());
                 builder.append(", ");
             }
         }

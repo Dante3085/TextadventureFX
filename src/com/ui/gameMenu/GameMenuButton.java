@@ -25,9 +25,19 @@ import java.util.LinkedList;
  */
 public class GameMenuButton extends StackPane implements GameMenuElement
 {
+    /**
+     * GameMenuButtons visible Text.
+     */
     private Text m_text = new Text();
+
+    /**
+     * GameMenuButtons background Rectangle.
+     */
     private Rectangle m_rec = new Rectangle();
 
+    /**
+     * Creates GameMenuButton with default values.
+     */
     public GameMenuButton()
     {
         // Improve Performance TODO: Might not do anything.
@@ -39,7 +49,7 @@ public class GameMenuButton extends StackPane implements GameMenuElement
         m_text.setText("NO_TEXT");
         m_text.setFont(new Font(20));
         m_text.setFill(Color.WHITE);
-        m_text.setTranslateX(10);
+        m_text.setTranslateX(100);
         double textWidth = m_text.getLayoutBounds().getWidth();
 
         // Init StackPane
@@ -86,6 +96,12 @@ public class GameMenuButton extends StackPane implements GameMenuElement
         getChildren().addAll(m_rec, m_text);
     }
 
+    /**
+     * Creates GameMenuButton with passed text, width and height.
+     * @param text Visible text for GameMenuButton
+     * @param width Width for GameMenuButton
+     * @param height Height for GameMenuButton
+     */
     public GameMenuButton(String text, double width, double height)
     {
         // Improve Performance TODO: Might not do anything.
@@ -97,7 +113,7 @@ public class GameMenuButton extends StackPane implements GameMenuElement
         m_text.setText(text);
         m_text.setFont(new Font(20));
         m_text.setFill(Color.WHITE);
-        //m_text.setTranslateX(10);
+        m_text.setTranslateX(10);
         double textWidth = m_text.getLayoutBounds().getWidth();
 
         // Init StackPane
@@ -155,66 +171,6 @@ public class GameMenuButton extends StackPane implements GameMenuElement
         // Init StackPane with text and rec as children
         getChildren().addAll(m_rec, m_text);
     }
-
-    public void setAutoResize(boolean on)
-    {
-        if (on == true)
-        {
-            Main.mainWindow.widthProperty().addListener((observable, oldValue, newValue) ->
-            {
-                this.setTranslateX(Main.mainWindow.widthProperty().doubleValue() - 200);
-            });     // Update imgView size when scene is resized.
-        }
-    }
-
-/*    public void setText_name(Text text_name)
-    {
-        this.text_name = text_name;
-    }
-
-    public void setBackground(Color c)
-    {
-        rec_bg.setFill(c);
-    }
-
-    public String getName()
-    {
-        return this.text_name.getText();
-    }
-
-    public Text getText_name()
-    {
-        return text_name;
-    }
-
-    public Rectangle getRec_bg()
-    {
-        return rec_bg;
-    }
-
-    @Override
-    public String id()
-    {
-        return this.text_name.getText();
-    }
-
-    @Override
-    public double height()
-    {
-        return rec_bg.getHeight();
-    }
-
-    @Override
-    public double width()
-    {
-        return rec_bg.getWidth();
-    }
-
-    @Override
-    public String toString()
-    {
-        return GameMenuButton.class.getName() + "[" + this.text_name.getText() + ", " + getWidth() + ", " + getHeight() + "]";
-    }*/
 
     @Override
     public String id()

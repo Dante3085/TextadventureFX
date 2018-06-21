@@ -37,15 +37,15 @@ public class CharacterView extends StackPane implements GameMenuElement
     private Text text_mpValue;
     private Text text_lvlUpPoints;
 
-    public CharacterView(String name, String hpValue, String mpValue)
+    public CharacterView(String name, int hpValue, int mpValue)
     {
         setCache(true);
         setCacheShape(true);
         setCacheHint(CacheHint.SPEED);
 
         this.name = name;
-        this.hpValue = hpValue;
-        this.mpValue = mpValue;
+        this.hpValue = Integer.toString(hpValue);
+        this.mpValue = Integer.toString(mpValue);
 
         // POLYGON
         polygon_bg = new Polygon
@@ -84,7 +84,7 @@ public class CharacterView extends StackPane implements GameMenuElement
         text_hp.setTranslateY(rec_bg.getHeight() * (-14 / rec_bg.getHeight()));
 
         // HP Value
-        text_hpValue = new Text(hpValue);
+        text_hpValue = new Text(this.hpValue);
         text_hpValue.setFont(text_hpValue.getFont().font(text_hpValue.getFont().getFamily(), FontWeight.NORMAL, 18));
         text_hpValue.setFill(Color.WHITE);
         text_hpValue.setTranslateX(rec_bg.getWidth() * (5.0 / 8.5));
@@ -98,7 +98,7 @@ public class CharacterView extends StackPane implements GameMenuElement
         text_mp.setTranslateY(rec_bg.getHeight() * (11 / rec_bg.getHeight()));
 
         // MP Value
-        text_mpValue = new Text(mpValue);
+        text_mpValue = new Text(this.mpValue);
         text_mpValue.setFont(text_mpValue.getFont().font(text_mpValue.getFont().getFamily(), FontWeight.NORMAL, 18));
         text_mpValue.setFill(Color.WHITE);
         text_mpValue.setTranslateX(rec_bg.getWidth() * (19.0 / 28.4));

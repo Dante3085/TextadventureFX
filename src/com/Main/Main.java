@@ -1,6 +1,7 @@
 package com.Main;
 
 import com.character.Character;
+import com.combat.Combat;
 import com.ui.*;
 import com.ui.gameMenu.*;
 import com.ui.combat.turnOrderView.TurnOrderView;
@@ -9,7 +10,6 @@ import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -23,6 +23,7 @@ import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 /**
@@ -38,8 +39,7 @@ public class Main extends Application
 
     private final int offset = 1900;
 
-    private GameMenu mainMenu = new GameMenu(new AnchorPane(), "mainMenu");
-    private GameMenu optionsMenu = new GameMenu(new TilePane(),"optionsMenu");
+    private GameMenu mainMenu;
 
     TextArea ta;
     public static Console console;
@@ -73,66 +73,12 @@ public class Main extends Application
         setupFpsView       ();
         initWindow         ();
         setupConsole       ();
-        setupMainMenu      ();
 
-        root.getChildren().addAll(mainMenu.layout(), optionsMenu.layout());
-    }
-
-    /**
-     * Assembles Textadventure's main mainMenu with all the buttons and their functionality. Menus are represented by instances of the 'GameMenu' class.
-     */
-    private void setupMainMenu()
-    {
-        AnimConfig config = new AnimConfig("config");
-        config.toX = 250;
-        config.duration = 250;
-
-        ObservableList<Node> children;
-
-        /*optionsMenu.setIsLimited(false);
-        optionsMenu.addElement(new GameMenuButton("BACK", 200, 50   ));
-        optionsMenu.addElement(new GameMenuButton("Option1", 200, 50));
-        optionsMenu.addElement(new GameMenuButton("Option2", 200, 50));
-
-        children = optionsMenu.layout().getChildren();
-
-        children.get(0).setOnMouseClicked(event ->
-        {
-            optionsMenu.forward();
-            mainMenu.backward();
-        });
-
-        //optionsMenu.dockRight();
-        optionsMenu.customizeUniformAnimation(config);
-        optionsMenu.forward();*/
-
-        mainMenu.setIsLimited(false);
-        mainMenu.addElement(new GameMenuButton("Resume", 200, 50   ));
-        mainMenu.addElement(new GameMenuButton("Level Up", 200, 50 ));
-        mainMenu.addElement(new GameMenuButton("Items", 200, 50    ));
-        mainMenu.addElement(new GameMenuButton("Abilities", 200, 50));
-        mainMenu.addElement(new GameMenuButton("Equip", 200, 50    ));
-        mainMenu.addElement(new GameMenuButton("Status", 200, 50   ));
-        mainMenu.addElement(new GameMenuButton("Options", 200, 50  ));
-        mainMenu.addElement(new GameMenuButton("Exit", 200, 50     ));
-
-        mainMenu.layout().setTranslateX(500);
-
-        children = mainMenu.layout().getChildren();
-
-        children.get(6).setOnMouseClicked(event ->
-        {
-            mainMenu.forward();
-            optionsMenu.backward();
-        });
-
-        children.get(7).setOnMouseClicked(event ->
-        {
-            System.exit(1);
-        });
-
-        //mainMenu.dockRight();
-        mainMenu.customizeUniformAnimation(config);
+        mainMenu = GameMenuBuilder.buildMainMenu();
+        // Add mainMenu layout and all layouts of mainMenus subMenus.
+        root.getChildren().addAll(mainMenu.layout());
+        for (GameMenu g : mainMenu.subMenus())
+            root.getChildren().add(g.layout());
     }
 
     public void addLine(double x, double y)
@@ -173,13 +119,13 @@ public class Main extends Application
             {
                 case ESCAPE:
                 {
-                    mainMenu.forward();
+                    mainMenu.collapse();
                     break;
                 }
 
                 case ALT:
                 {
-                    mainMenu.backward();
+                    mainMenu.expand();
                     break;
                 }
             }

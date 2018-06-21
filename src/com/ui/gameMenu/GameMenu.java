@@ -2,10 +2,8 @@ package com.ui.gameMenu;
 
 import com.Main.Main;
 import javafx.animation.*;
-import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -18,12 +16,20 @@ import java.util.logging.Logger;
  */
 public class GameMenu
 {
-    Pane m_layout;
-
     /**
      * Logger of this class used for logging status, warning and error information to console and / or files.
      */
     private static final Logger m_log = Logger.getLogger(GameMenu.class.getName());
+
+    /**
+     * Layout of this GameMenu.
+     */
+    private Pane m_layout;
+
+    /**
+     * Stores GameMenus that are subordiante to this GameMenu.
+     */
+    private ArrayList<GameMenu> m_subMenus = new ArrayList<>();
 
     /**
      * Name of the GameMenu.
@@ -40,26 +46,18 @@ public class GameMenu
      */
     private int m_maxSize = 0;
 
+    // TODO: Vorwärts muss nicht immer collapsing bedeuten. Dasselbe gilt für die backward Transition.
     /**
-     * Stores TranslateTransitions for forward uniformAnimation.
+     * TranslateTransition for moving the GameMenu forward (i.e. collapsing it).
      */
-    private ArrayList<TranslateTransition> m_ttForward = new ArrayList<TranslateTransition>();
+    private TranslateTransition m_ttForward;
 
     /**
-     * Stores TranslateTransitions for backwards uniformAnimation.
+     * TranslateTranistion for moving the GameMenu backward (i.e expanding it).
      */
-    private ArrayList<TranslateTransition> m_ttBackwards = new ArrayList<TranslateTransition>();
+    private TranslateTransition m_ttBackward;
 
-    /**
-     * ParallelTransition for forward {@code uniformAnimation}.
-     */
-    private ParallelTransition m_ptForward = new ParallelTransition();
-
-    /**
-     * ParallelTransition for backwards {@code uniformAnimation}.
-     */
-    private ParallelTransition m_ptBackwards = new ParallelTransition();
-
+    // TODO: Vielleicht unnötige Verkapselung. Einfach TranslateTransition direkt zurückgeben in Getter?
     /**
      * Current AnimConfig.
      */
@@ -71,36 +69,50 @@ public class GameMenu
     private boolean m_isCollapsed = true;
 
     /**
-     * Creates empty {@code GameMenu} with passed name. Empty means no elements.
-     * @param name Name of GameMenu.
+     * Stores biggest width value of all GameMenuElements.
+     */
+    private double m_biggestWidth;
+
+    /**
+     * Constructs GameMenu with passed layout and passed name.
+     * <br>Also constructs a 'forward' and 'backward' TranslateTransition for the passed layout. Default Duration is 500 ms.
+     * @param layout LayoutPane
+     * @param name Name
      */
     public GameMenu(Pane layout, String name)
     {
         m_layout = layout;
-
-        m_layout.setCache(true);
-        m_layout.setCacheShape(true);
-        m_layout.setCacheHint(CacheHint.SPEED);
-
         m_name = name;
+
+        m_ttForward = new TranslateTransition(Duration.millis(500), m_layout);
+        m_ttBackward = new TranslateTransition(Duration.millis(500), m_layout);
     }
 
     /**
-     * Creates GameMenu with passed name and passed List of Elements.
-     * @param name Name of GameMenu.
-     * @param elements Initial List of Elements for GameMenu.
+     * Constructs GameMenu with passed layout (Pane), name and List of Nodes. List of Nodes is passed to layout's ObservableList.
+     * <br>Also constructs a collapse and expand TranslateTransition for layout. Default Duration is 500 ms.
+     * @param layout Layout Pane
+     * @param name Name
+     * @param elements List of Nodes
      */
     public GameMenu(Pane layout, String name, List<Node> elements)
     {
         m_layout = layout;
-
-        m_layout.setCache(true);
-        m_layout.setCacheShape(true);
-        m_layout.setCacheHint(CacheHint.SPEED);
-
+        m_layout.getChildren().addAll(elements);
         m_name = name;
-        for (Node g: elements)
-                m_layout.getChildren().add(g);
+
+        m_ttForward = new TranslateTransition(Duration.millis(500), m_layout);
+        m_ttBackward = new TranslateTransition(Duration.millis(500), m_layout);
+    }
+
+    public TranslateTransition getTtForward()
+    {
+        return m_ttForward;
+    }
+
+    public TranslateTransition getTtBackward()
+    {
+        return m_ttBackward;
     }
 
     public void dockTop()
@@ -108,20 +120,48 @@ public class GameMenu
         m_layout.setTranslateY(0);
     }
 
+    /**
+     * Docks this GameMenu to the right edge of the window.
+     * <br>Meaning that everytime the window is resized, the GameMenu's position is also updated so that it still is at the right edge.
+     */
     public void dockRight()
     {
-        double biggestWidth = Double.MIN_VALUE;
+        // TODO: boolean that signals if new elements was added.
+        updateBiggestWidth();
+        m_layout.setTranslateX(Main.mainWindow.getWidth() - m_biggestWidth);
+        Main.mainWindow.widthProperty().addListener((observable, oldValue, newValue) ->
+        {
+            m_layout.setTranslateX(newValue.doubleValue() - m_biggestWidth);
+        });
+    }
+
+    /**
+     * Places the GameMenu at the right edge of the window once.
+     * <br>Passed offset offsets GameMenu from right edge of window position by it's value.
+     * @param offset Offsets GameMenu from right edge position by it's value.
+     */
+    public void putRight(int offset)
+    {
+        updateBiggestWidth();
+        m_layout.setTranslateX(Main.mainWindow.getWidth() - m_biggestWidth + offset);
+    }
+
+    /**
+     * Goes through all GameMenuElements and stores width value of broadest Element in "m_biggestWidth".
+     */
+    public void updateBiggestWidth()
+    {
+        m_biggestWidth = Double.MIN_VALUE;
         for (Node n : m_layout.getChildren())
         {
             if (n instanceof GameMenuButton)
             {
-                if (((GameMenuButton) n).width() > biggestWidth)
-                    biggestWidth = ((GameMenuButton) n).width();
+                if (((GameMenuButton) n).width() > m_biggestWidth)
+                    m_biggestWidth = ((GameMenuButton) n).width();
             }
             else
                 throw new UnsupportedOperationException();
         }
-        m_layout.setTranslateX(Main.mainWindow.getWidth() - biggestWidth);
     }
 
     public void dockBottom()
@@ -145,18 +185,18 @@ public class GameMenu
     /**
      * Expand GameMenu when it's collapsed.
      */
-    public void forward()
+    public void collapse()
     {
-        m_ptForward.play();
+        m_ttForward.play();
         m_isCollapsed = true;
     }
 
     /**
      * Backwards uniformAnimation.
      */
-    public void backward()
+    public void expand()
     {
-        m_ptBackwards.play();
+        m_ttBackward.play();
         m_isCollapsed = false;
     }
 
@@ -167,40 +207,30 @@ public class GameMenu
     public void customizeUniformAnimation(AnimConfig config)
     {
         m_current = config;
-        // TODO: Sind die TranslateTransitions in der SequentialTransition gleich zu denen in der ParallelTransition ?
-        if (m_ptForward.getChildren().isEmpty())
-            m_log.warning("@customizeUniformAnimation(" + config.toString() +"): There are no Animations.");
 
-        for (Animation a : m_ptForward.getChildren())
-        {
-            TranslateTransition forward = (TranslateTransition) a;
-            forward.setDuration(Duration.millis(config.duration));
+        // Set collapse TranslateTransition
+        m_ttForward.setDuration(Duration.millis(config.duration));
 
-            forward.setFromX(config.fromX);
-            forward.setToX(config.toX);
+        m_ttForward.setFromX(config.fromX);
+        m_ttForward.setToX(config.toX);
 
-            forward.setFromY(config.fromY);
-            forward.setToY(config.toY);
+        m_ttForward.setFromY(config.fromY);
+        m_ttForward.setToY(config.toY);
 
-            forward.setFromZ(config.fromZ);
-            forward.setToZ(config.toZ);
-        }
+        m_ttForward.setFromZ(config.fromZ);
+        m_ttForward.setToZ(config.toZ);
 
-        for (Animation a : m_ptBackwards.getChildren())
-        {
-            TranslateTransition backward = (TranslateTransition) a;
-            backward.setDuration(Duration.millis(config.duration));
+        // Set expand TranslateTransition.
+        m_ttBackward.setDuration(Duration.millis(config.duration));
 
-            // For backwards Animation 'to' and 'from' are reversed.
-            backward.setFromX(config.toX);
-            backward.setToX(config.fromX);
+        m_ttBackward.setFromX(config.toX);
+        m_ttBackward.setToX(config.fromX);
 
-            backward.setFromY(config.toY);
-            backward.setToY(config.fromY);
+        m_ttBackward.setFromY(config.toY);
+        m_ttBackward.setToY(config.fromY);
 
-            backward.setFromZ(config.toZ);
-            backward.setToZ(config.fromZ);
-        }
+        m_ttBackward.setFromZ(config.toZ);
+        m_ttBackward.setToZ(config.fromZ);
     }
 
     /**
@@ -244,16 +274,16 @@ public class GameMenu
         // Add element to GameMenu VBox.
         layout.getChildren().add(element);
 
-        // Register new forward and backward TranslateTransition for new element.
-        TranslateTransition forward = new TranslateTransition(new Duration(1000), element);
-        forward.setFromX(element.getTranslateX());
-        forward.setToX(element.getTranslateX() + 300);
-        m_ptForward.getChildren().add(forward);
+        // Register new collapse and expand TranslateTransition for new element. // TODO: Register TranslateTransition for each new GameMenuElement.
+        /*TranslateTransition collapse = new TranslateTransition(new Duration(1000), element);
+        collapse.setFromX(element.getTranslateX());
+        collapse.setToX(element.getTranslateX() + 300);
+        m_ptForward.getChildren().add(collapse);
 
-        TranslateTransition backward = new TranslateTransition(new Duration(1000), element);
-        backward.setFromX(element.getTranslateX() + 300);
-        backward.setToX(element.getTranslateX());
-        m_ptBackwards.getChildren().add(backward);
+        TranslateTransition expand = new TranslateTransition(new Duration(1000), element);
+        expand.setFromX(element.getTranslateX() + 300);
+        expand.setToX(element.getTranslateX());
+        m_ptBackwards.getChildren().add(expand);*/
     }
 
     /**
@@ -321,6 +351,15 @@ public class GameMenu
     public Pane layout()
     {
         return m_layout;
+    }
+
+    /**
+     * Returns ArrayList with GameMenus that are subordinate to this GameMenu.
+     * @return SubMenus.
+     */
+    public ArrayList<GameMenu> subMenus()
+    {
+        return m_subMenus;
     }
 
     /**

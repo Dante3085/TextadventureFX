@@ -75,10 +75,9 @@ public class Main extends Application
         setupConsole       ();
 
         mainMenu = GameMenuBuilder.buildMainMenu();
-        // Add mainMenu layout and all layouts of mainMenus subMenus.
-        root.getChildren().addAll(mainMenu.layout());
-        for (GameMenu g : mainMenu.subMenus())
-            root.getChildren().add(g.layout());
+
+        // Add mainMenu layout and all layouts of mainMenus subMenus and their subMenus (and so on) to root Pane.
+        mainMenu.addMenuStructureToPane(mainMenu, root);
     }
 
     public void addLine(double x, double y)

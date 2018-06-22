@@ -2,8 +2,10 @@ package com.ui.gameMenu;
 
 import com.Main.Main;
 import javafx.animation.*;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -48,20 +50,14 @@ public class GameMenu
 
     // TODO: Vorwärts muss nicht immer collapsing bedeuten. Dasselbe gilt für die backward Transition.
     /**
-     * TranslateTransition for moving the GameMenu forward (i.e. collapsing it).
+     * TranslateTransition for moving the GameMenu forward (i.e. collapsing it). Part of uniformAnimation.
      */
     private TranslateTransition m_ttForward;
 
     /**
-     * TranslateTranistion for moving the GameMenu backward (i.e expanding it).
+     * TranslateTranistion for moving the GameMenu backward (i.e expanding it). Part of uniformAnimation.
      */
     private TranslateTransition m_ttBackward;
-
-    // TODO: Vielleicht unnötige Verkapselung. Einfach TranslateTransition direkt zurückgeben in Getter?
-    /**
-     * Current AnimConfig.
-     */
-    private AnimConfig m_current;
 
     /**
      * Determines whether this GameMenu is collapsed or expanded.
@@ -74,6 +70,11 @@ public class GameMenu
     private double m_biggestWidth;
 
     /**
+     * MediaPlayer of GameMenu
+     */
+    private MediaPlayer m_mediaPlayer;
+
+    /**
      * Constructs GameMenu with passed layout and passed name.
      * <br>Also constructs a 'forward' and 'backward' TranslateTransition for the passed layout. Default Duration is 500 ms.
      * @param layout LayoutPane
@@ -84,8 +85,8 @@ public class GameMenu
         m_layout = layout;
         m_name = name;
 
-        m_ttForward = new TranslateTransition(Duration.millis(500), m_layout);
-        m_ttBackward = new TranslateTransition(Duration.millis(500), m_layout);
+        m_ttForward = new TranslateTransition(Duration.millis(50), m_layout);
+        m_ttBackward = new TranslateTransition(Duration.millis(50), m_layout);
     }
 
     /**
@@ -102,7 +103,29 @@ public class GameMenu
         m_name = name;
 
         m_ttForward = new TranslateTransition(Duration.millis(500), m_layout);
+        m_ttForward.setOnFinished(event -> m_layout.setVisible(false));
+
         m_ttBackward = new TranslateTransition(Duration.millis(500), m_layout);
+    }
+
+    public MediaPlayer mediaPlayer()
+    {
+        return m_mediaPlayer;
+    }
+
+    /**
+     * Recursively goes through SubMenus of the passed GameMenu and their SubMenus (and so on) and adds their layouts to the passed root Pane.
+     * @param mainMenu GameMenu at the top of relative MenuStructure.
+     * @param root Passed root Pane.
+     */
+    public void addMenuStructureToPane(GameMenu mainMenu, Pane root)
+    {
+        if (!mainMenu.subMenus().isEmpty())
+        {
+            for (GameMenu g : mainMenu.subMenus())
+                addMenuStructureToPane(g, root);
+        }
+        root.getChildren().add(mainMenu.layout());
     }
 
     public TranslateTransition getTtForward()
@@ -198,39 +221,6 @@ public class GameMenu
     {
         m_ttBackward.play();
         m_isCollapsed = false;
-    }
-
-    /**
-     * Applies the properties of the passed AnimConfig to all TranslateTransitions.
-     * @param config Passed AnimConfig.
-     */
-    public void customizeUniformAnimation(AnimConfig config)
-    {
-        m_current = config;
-
-        // Set collapse TranslateTransition
-        m_ttForward.setDuration(Duration.millis(config.duration));
-
-        m_ttForward.setFromX(config.fromX);
-        m_ttForward.setToX(config.toX);
-
-        m_ttForward.setFromY(config.fromY);
-        m_ttForward.setToY(config.toY);
-
-        m_ttForward.setFromZ(config.fromZ);
-        m_ttForward.setToZ(config.toZ);
-
-        // Set expand TranslateTransition.
-        m_ttBackward.setDuration(Duration.millis(config.duration));
-
-        m_ttBackward.setFromX(config.toX);
-        m_ttBackward.setToX(config.fromX);
-
-        m_ttBackward.setFromY(config.toY);
-        m_ttBackward.setToY(config.fromY);
-
-        m_ttBackward.setFromZ(config.toZ);
-        m_ttBackward.setToZ(config.fromZ);
     }
 
     /**

@@ -6,6 +6,12 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * GameMenuBuilder for streamlining creation of complex GameMenu Objects.
@@ -27,18 +33,25 @@ public class GameMenuBuilder
         GameMenu optionMenu = new GameMenu(new VBox(), "OptionMenu");
         GameMenu soundMenu = new GameMenu(new VBox(), "SoundMenu");
         GameMenu videoMenu = new GameMenu(new VBox(), "VideoMenu");
+        GameMenu animationMenu = new GameMenu(new VBox(), "AnimationMenu");
+
+        // Temporarily stores each GameMenus subMenu ArrayList.
+        ArrayList<GameMenu> subMenus;
 
         // Put all other menus as subMenus of mainMenu.
-        mainMenu.subMenus().add(levelUpMenu);
-        mainMenu.subMenus().add(itemsMenu);
-        mainMenu.subMenus().add(abilitiesMenu);
-        mainMenu.subMenus().add(equipMenu);
-        mainMenu.subMenus().add(statusMenu);
-        mainMenu.subMenus().add(optionMenu);
+        subMenus = mainMenu.subMenus();
+        subMenus.add(levelUpMenu);
+        subMenus.add(itemsMenu);
+        subMenus.add(abilitiesMenu);
+        subMenus.add(equipMenu);
+        subMenus.add(statusMenu);
+        subMenus.add(optionMenu);
 
-        // Put video- and soundMenu as subMenus of optionMenu.
+        // Put soundMenu, videoMenu and animationMenu as subMenus of optionMenu.
+        subMenus = optionMenu.subMenus();
         optionMenu.subMenus().add(soundMenu);
         optionMenu.subMenus().add(videoMenu);
+        optionMenu.subMenus().add(animationMenu);
 
         // mainMenu
         mainMenu.addElement(new GameMenuButton("Resume", 200, 50   ));
@@ -72,10 +85,11 @@ public class GameMenuBuilder
         mainMenu.getTtForward().setByX(250);
         mainMenu.getTtBackward().setByX(-250);
 
-        // optionsMenu
+        // optionMenu
         optionMenu.addElement(new GameMenuButton("BACK", 200, 50));
         optionMenu.addElement(new GameMenuButton("Sound", 200, 50));
         optionMenu.addElement(new GameMenuButton("Video", 200, 50));
+        optionMenu.addElement(new GameMenuButton("Animation", 200, 50));
 
         // Temporarily save children of optionMenu.
         children = optionMenu.layout().getChildren();
@@ -99,6 +113,12 @@ public class GameMenuBuilder
             videoMenu.expand();
         });
 
+        children.get(3).setOnMouseClicked(event ->
+        {
+            optionMenu.collapse();
+            animationMenu.expand();
+        });
+
         // Position optionMenu at right edge of window with 250 offset that hides the menu offscreen.
         optionMenu.putRight(250);
 
@@ -107,6 +127,8 @@ public class GameMenuBuilder
 
         // soundMenu
         soundMenu.addElement(new GameMenuButton("BACK", 200, 50));
+        soundMenu.addElement(new GameMenuButton("FFX - Otherworld", 200, 50));
+        soundMenu.addElement(new GameMenuButton("FFX - To Zanarkand", 200, 50));
 
         // Temporarily save children of soundMenu.
         children = soundMenu.layout().getChildren();
@@ -116,6 +138,14 @@ public class GameMenuBuilder
         {
             soundMenu.collapse();
             optionMenu.expand();
+        });
+
+        children.get(1).setOnMouseClicked(event ->
+        {
+            /*final String filepath = "src/com/res/FFX_Otherworld.mp3";
+            Media mp3 = new Media(new File(filepath).toURI().toString());
+            soundMenu.mediaPlayer() = new MediaPlayer(mp3);
+            mediaPlayer.play();*/
         });
 
         soundMenu.putRight(250);
@@ -138,6 +168,22 @@ public class GameMenuBuilder
 
         videoMenu.getTtForward().setByX(250);
         videoMenu.getTtBackward().setByX(-250);
+
+        // animationMenu
+        animationMenu.addElement(new GameMenuButton("BACK", 200, 50));
+
+        children = animationMenu.layout().getChildren();
+
+        children.get(0).setOnMouseClicked(event ->
+        {
+            animationMenu.collapse();
+            optionMenu.expand();
+        });
+
+        animationMenu.putRight(250);
+
+        animationMenu.getTtForward().setByX(250);
+        animationMenu.getTtBackward().setByX(-250);
 
         return mainMenu;
     }
